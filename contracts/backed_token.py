@@ -270,6 +270,47 @@ def m():
             Fa1_2.__init__(self, metadata, ledger, token_metadata)
             Pause.__init__(self)
             Admin.__init__(self, administrator)
+    
+    #################################
+    # TODO: Backed_Token_Factory.py #
+    #################################
+    class Factory(sp.Contract):
+        def __init__(self):
+            self.data.c1 = None
+
+        @sp.entrypoint
+        def deploy_token(self, administrator, metadata, name, symbol, icon, decimals):
+            # TODO: string input, convert to bytes
+            token_metadata = {
+                "decimals": decimals,  # Mandatory by the spec
+                "name": name,  # Recommended
+                "symbol": symbol,  # Recommended
+                # Extra fields
+                "icon": icon,
+            }
+            token_metadata_storage = sp.big_map(
+                {0: sp.record(token_id=0, token_info=token_metadata)}
+            )
+
+            metadata_storage = sp.big_map({"" : metadata})
+
+            balances = sp.cast(
+                sp.big_map(),
+                sp.big_map[
+                    sp.address,
+                    sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat),
+                ],
+            )
+
+            self.data.c1 = sp.Some(
+                sp.create_contract(Fa1_2Full, None, sp.mutez(0), sp.record(administrator=administrator, paused = False, balances = balances, metadata = metadata_storage, total_supply = 0, token_metadata = token_metadata_storage))
+            )
+
+    ##########
+    # Tests #
+    ##########
+
+   
 
     class Viewer_nat(sp.Contract):
         def __init__(self):
