@@ -258,11 +258,7 @@ def m():
             assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
             self.data.metadata[key] = value
 
-    ##########
-    # Tests #
-    ##########
-
-    class Fa1_2TestFull(Admin, Pause, Fa1_2, Mint, Burn, ChangeMetadata):
+    class Fa1_2Full(Admin, Pause, Fa1_2, Mint, Burn, ChangeMetadata):
         def __init__(self, administrator, metadata, ledger, token_metadata):
             ChangeMetadata.__init__(self)
             Burn.__init__(self)
@@ -274,13 +270,34 @@ def m():
     #################################
     # TODO: Backed_Token_Factory.py #
     #################################
-    class Factory(sp.Contract):
-        def __init__(self):
-            self.data.c1 = None
-
+    #
+    # @dev
+    #
+    # Factory contract, used for creating new, upgradable tokens.
+    # 
+    # The contract contains one role:
+    #  - An administrator, which can deploy new tokens
+    #
+    class Factory(Admin):
+        #
+        # @param administrator The address of the account that will be set as owner of the contract
+        #
+        def __init__(self, administrator):
+            Admin.__init__(self, administrator)
+        
+        #
+        # @dev Deploy and configures new instance of BackedFi Token. Callable only by the factory owner
+        # Emits a { NewToken } event
+        # 
+        # @param name          The name that the newly created token will have
+        # @param symbol        The symbol that the newly created token will have
+        # @param icon          The icon that the newly created token will have
+        # @param decimals      The number of decimals that the newly created token will have
+        # @param tokenOwner    The address of the account to which the owner role will be assigned
+        #
         @sp.entrypoint
-        def deploy_token(self, administrator, metadata, name, symbol, icon, decimals):
-            # TODO: string input, convert to bytes
+        def deploy_token(self, tokenOwner, metadata, name, symbol, icon, decimals):
+            assert tokenOwner != sp.address("0"), "Factory: address should not be 0"
             token_metadata = {
                 "decimals": decimals,  # Mandatory by the spec
                 "name": name,  # Recommended
@@ -302,10 +319,10 @@ def m():
                 ],
             )
 
-            self.data.c1 = sp.Some(
-                sp.create_contract(Fa1_2Full, None, sp.mutez(0), sp.record(administrator=administrator, paused = False, balances = balances, metadata = metadata_storage, total_supply = 0, token_metadata = token_metadata_storage))
-            )
+            address = sp.create_contract(Fa1_2Full, None, sp.mutez(0), sp.record(administrator=tokenOwner, paused = False, balances = balances, metadata = metadata_storage, total_supply = 0, token_metadata = token_metadata_storage))
 
+            sp.emit(sp.record(address=address, name=name, symbol=symbol), tag="NewToken")
+        # TODO: updateImplementation
     ##########
     # Tests #
     ##########
