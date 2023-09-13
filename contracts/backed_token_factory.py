@@ -1,8 +1,9 @@
 import smartpy as sp
-from contracts.backed_token import module as token_module
+from contracts.backed_token import backed_token_module
+from contracts.utils.admin import admin_module
 
 @sp.module
-def module():
+def backed_token_factory_module():
     # @dev
     #
     # Factory contract, used for creating new, upgradable tokens.
@@ -10,12 +11,12 @@ def module():
     # The contract contains one role:
     #  - An administrator, which can deploy new tokens
     #
-    class BackedFactory(Admin):
+    class BackedFactory(admin_module.Admin):
         #
         # @param administrator The address of the account that will be set as owner of the contract
         #
         def __init__(self, administrator):
-            Admin.__init__(self, administrator)
+            admin_module.Admin.__init__(self, administrator)
         
         #
         # @dev Deploy and configures new instance of BackedFi Token. Callable only by the factory owner
@@ -51,7 +52,7 @@ def module():
                 ],
             )
 
-            address = sp.create_contract(token_module.BackedToken, None, sp.mutez(0), sp.record(administrator=tokenOwner, paused = False, balances = balances, metadata = metadata_storage, total_supply = 0, token_metadata = token_metadata_storage))
+            address = sp.create_contract(backed_token_module.BackedToken, None, sp.mutez(0), sp.record(administrator=tokenOwner, paused = False, balances = balances, metadata = metadata_storage, total_supply = 0, token_metadata = token_metadata_storage))
 
             # sp.emit(sp.record(address=address, name=name, symbol=symbol), tag="NewToken")
         # TODO: updateImplementation

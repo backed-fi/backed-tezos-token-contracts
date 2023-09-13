@@ -2,6 +2,8 @@
 # Inspired by https://gitlab.com/tzip/tzip/blob/master/A/FA1.2.md
 
 import smartpy as sp
+from contracts.utils.admin import admin_module
+from contracts.utils.pause import pause_module
 
 # The metadata below is just an example, it serves as a base,
 # the contents are used to build the metadata JSON that users
@@ -16,17 +18,10 @@ TZIP16_Metadata_Base = {
 
 
 @sp.module
-def module():
-    class AdminInterface(sp.Contract):
-        @sp.private(with_storage="read-only")
-        def is_administrator_(self, sender):
-            sp.cast(sp.sender, sp.address)
-            """Not standard, may be re-defined through inheritance."""
-            return True
-
-    class CommonInterface(AdminInterface):
+def backed_token_module():
+    class CommonInterface(admin_module.AdminInterface):
         def __init__(self):
-            AdminInterface.__init__(self)
+            admin_module.AdminInterface.__init__(self)
             self.data.balances = sp.cast(
                 sp.big_map(),
                 sp.big_map[
@@ -176,44 +171,6 @@ def module():
     # Mixins #
     ##########
 
-    class Admin(sp.Contract):
-        def __init__(self, administrator):
-            self.data.administrator = administrator
-
-        @sp.private(with_storage="read-only")
-        def is_administrator_(self, sender):
-            return sender == self.data.administrator
-
-        @sp.entrypoint
-        def setAdministrator(self, params):
-            sp.cast(params, sp.address)
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
-            self.data.administrator = params
-
-        @sp.entrypoint()
-        def getAdministrator(self, param):
-            sp.cast(param, sp.pair[sp.unit, sp.contract[sp.address]])
-            sp.transfer(self.data.administrator, sp.tez(0), sp.snd(param))
-
-        @sp.onchain_view()
-        def get_administrator(self):
-            return self.data.administrator
-
-    class Pause(AdminInterface):
-        def __init__(self):
-            AdminInterface.__init__(self)
-            self.data.paused = False
-
-        @sp.private(with_storage="read-only")
-        def is_paused_(self):
-            return self.data.paused
-
-        @sp.entrypoint
-        def setPause(self, param):
-            sp.cast(param, sp.bool)
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
-            self.data.paused = param
-
     class Mint(CommonInterface):
         def __init__(self):
             CommonInterface.__init__(self)
@@ -221,7 +178,7 @@ def module():
         @sp.entrypoint
         def mint(self, param):
             sp.cast(param, sp.record(address=sp.address, value=sp.nat))
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
+            # assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
             receiver_balance = self.data.balances.get(
                 param.address, default=sp.record(balance=0, approvals={})
             )
@@ -257,12 +214,12 @@ def module():
             assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
             self.data.metadata[key] = value
 
-    class BackedToken(Admin, Pause, Fa1_2, Mint, Burn, ChangeMetadata):
+    class BackedToken(admin_module.Admin, pause_module.Pause, Fa1_2, Mint, Burn, ChangeMetadata):
         def __init__(self, administrator, metadata, ledger, token_metadata):
             ChangeMetadata.__init__(self)
             Burn.__init__(self)
             Mint.__init__(self)
             Fa1_2.__init__(self, metadata, ledger, token_metadata)
-            Pause.__init__(self)
-            Admin.__init__(self, administrator)
+            pause_module.Pause.__init__(self)
+            admin_module.Admin.__init__(self, administrator)
   

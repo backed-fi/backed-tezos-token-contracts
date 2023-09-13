@@ -1,5 +1,8 @@
 import smartpy as sp
-from contracts.backed_token_factory import module 
+from contracts.backed_token_factory import backed_token_factory_module
+from contracts.backed_token import backed_token_module
+from contracts.utils.admin import admin_module 
+from contracts.utils.pause import pause_module 
 
 @sp.module
 def test_module():
@@ -12,15 +15,19 @@ def test_module():
             self.data.last = sp.Some(params)
 
 if "templates" not in __name__:
-    sc = sp.test_scenario([module, test_module])
-    sc.h1("Backed Token Factory")
+    @sp.add_test(name="backed_token_factory")
+    def test():
+        sc = sp.test_scenario([admin_module, pause_module, backed_token_module, backed_token_factory_module, test_module])
+        sc.h1("Backed Token Factory")
 
-    # sp.test_account generates ED25519 key-pairs deterministically:
-    admin = sp.test_account("Administrator")
-    alice = sp.test_account("Alice")
-    bob = sp.test_account("Robert")
+        # sp.test_account generates ED25519 key-pairs deterministically:
+        admin = sp.test_account("Administrator")
+        alice = sp.test_account("Alice")
+        bob = sp.test_account("Robert")
 
 
-    f = module.BackedFactory(admin.address)
+        f = backed_token_factory_module.BackedFactory(admin.address)
 
-    sc+= f
+        sc+= f
+
+        sc.h1("Attempt to update metadata")

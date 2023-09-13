@@ -1,5 +1,12 @@
 import smartpy as sp
-from contracts.backed_token import module 
+from contracts.backed_token import backed_token_module 
+from contracts.utils.admin import admin_module 
+from contracts.utils.pause import pause_module 
+
+
+        actions = sp.big_map({
+            "mint": sp.build_lambda(main.mint),
+        })
 
 @sp.module
 def test_module():
@@ -23,7 +30,7 @@ def test_module():
 if "templates" not in __name__:
     @sp.add_test(name="backed_token")
     def test():
-        sc = sp.test_scenario([module, test_module])
+        sc = sp.test_scenario([admin_module, pause_module, backed_token_module, test_module])
         sc.h1("Backed Token Implementation")
 
         # sp.test_account generates ED25519 key-pairs deterministically:
@@ -52,7 +59,7 @@ if "templates" not in __name__:
             "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
         )
 
-        c1 = module.Backed_Token(
+        c1 = backed_token_module.BackedToken(
             administrator=admin.address,
             metadata=contract_metadata,
             token_metadata=token_metadata,
