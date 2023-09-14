@@ -3,11 +3,6 @@ from contracts.backed_token import backed_token_module
 from contracts.utils.admin import admin_module 
 from contracts.utils.pause import pause_module 
 
-
-        actions = sp.big_map({
-            "mint": sp.build_lambda(main.mint),
-        })
-
 @sp.module
 def test_module():
     class Viewer_nat(sp.Contract):

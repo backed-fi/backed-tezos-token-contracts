@@ -16,7 +16,6 @@ TZIP16_Metadata_Base = {
     "interfaces": ["TZIP-007-2021-04-17", "TZIP-016-2021-04-17"],
 }
 
-
 @sp.module
 def backed_token_module():
     class CommonInterface(admin_module.AdminInterface):

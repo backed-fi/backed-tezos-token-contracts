@@ -1,6 +1,10 @@
 import smartpy as sp
-from contracts.backed_token import backed_token_module
 from contracts.utils.admin import admin_module
+from contracts.backed_token import backed_token_module
+from contracts.backed_token_proxy import backed_token_proxy_module
+
+from contracts.actions.mint import mint_module
+from contracts.actions.burn import burn_module
 
 @sp.module
 def backed_token_factory_module():
@@ -52,7 +56,26 @@ def backed_token_factory_module():
                 ],
             )
 
-            address = sp.create_contract(backed_token_module.BackedToken, None, sp.mutez(0), sp.record(administrator=tokenOwner, paused = False, balances = balances, metadata = metadata_storage, total_supply = 0, token_metadata = token_metadata_storage))
+            
+            newToken = sp.create_contract(
+                backed_token_module.BackedToken,
+                None,
+                sp.mutez(0),
+                sp.record(administrator=tokenOwner, paused = False, balances = balances, metadata = metadata_storage, total_supply = 0, token_metadata = token_metadata_storage)
+            )
+
+            registry = sp.big_map({
+                "mint": mint_module.mint,
+                "burn": burn_module.burn
+            })
+
+
+            proxyAdmin = sp.create_contract(
+                backed_token_proxy_module.BackedTokenProxy,
+                None,
+                sp.mutez(0),
+                sp.record(administrator=tokenOwner, registry=registry, implementation=newToken)
+            )
 
             # sp.emit(sp.record(address=address, name=name, symbol=symbol), tag="NewToken")
         # TODO: updateImplementation
