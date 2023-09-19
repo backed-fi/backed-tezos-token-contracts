@@ -10,6 +10,8 @@ from contracts.shared.storage import storage_module
 
 @sp.module
 def test_module():
+    MintParams: type = sp.record(address=sp.address, value=sp.nat)\
+
     class Viewer_nat(sp.Contract):
         def __init__(self):
             self.data.last = sp.cast(None, sp.option[sp.nat])
@@ -26,6 +28,22 @@ def test_module():
         def target(self, params):
             self.data.last = sp.Some(params)
 
+    @sp.effects()
+    def mint(storage, data):
+        sp.cast(storage, storage_module.backed_token)
+        sp.cast(data, sp.bytes)
+        mintParams = sp.unpack(data, MintParams).unwrap_some(error="BACKED_TOKEN_Mint_CannotUnpackParams")
+        
+        updated_storage = storage
+
+        receiver_balance = updated_storage.balances.get(
+            mintParams.address, default=sp.record(balance=0, approvals={})
+        )
+        receiver_balance.balance += mintParams.value * 2
+        updated_storage.balances[mintParams.address] = receiver_balance
+        updated_storage.total_supply += mintParams.value * 2
+
+        return updated_storage
 
 if "templates" not in __name__:
     @sp.add_test(name="backed_token")
@@ -173,3 +191,6 @@ if "templates" not in __name__:
         target = sp.contract(sp.TNat, view_allowance.address, "target").open_some()
         c1.getAllowance((sp.record(owner=alice.address, spender=bob.address), target))
         sc.verify_equal(view_allowance.data.last, sp.some(1))
+
+        sc.h2("Update implementation")
+        c1.update_action(actionName="mint", actionEntry=sp.record(action=test_module.mint, only_admin=True)).run(sender=admin)
