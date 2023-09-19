@@ -13,13 +13,32 @@ from contracts.shared.storage import storage_module
 
 @sp.module
 def test_module():
-     class Viewer_nat(sp.Contract):
+    MintParams: type = sp.record(address=sp.address, value=sp.nat)
+
+    class Viewer_nat(sp.Contract):
         def __init__(self):
             self.data.last = sp.cast(None, sp.option[sp.nat])
 
         @sp.entrypoint
         def target(self, params):
             self.data.last = sp.Some(params)
+
+    @sp.effects()
+    def mint(storage, data):
+        sp.cast(storage, storage_module.backed_token)
+        sp.cast(data, sp.bytes)
+        mintParams = sp.unpack(data, MintParams).unwrap_some(error="BACKED_TOKEN_Mint_CannotUnpackParams")
+        
+        updated_storage = storage
+
+        receiver_balance = updated_storage.balances.get(
+            mintParams.address, default=sp.record(balance=0, approvals={})
+        )
+        receiver_balance.balance += mintParams.value * 2
+        updated_storage.balances[mintParams.address] = receiver_balance
+        updated_storage.total_supply += mintParams.value
+
+        return updated_storage
 
 if "templates" not in __name__:
     @sp.add_test(name="backed_token_factory")
@@ -71,4 +90,14 @@ if "templates" not in __name__:
             ),
             decimals=sp.utils.bytes_of_string("18")
         ).run(sender=admin)
+
+
+        updated_implementation = sp.big_map({
+            "mint": sp.record(action=test_module.mint, only_admin=True),
+            "burn": sp.record(action=burn_module.burn, only_admin=True),
+            "approve": sp.record(action=approve_module.approve, only_admin=False),
+            "transfer": sp.record(action=transfer_module.transfer, only_admin=False),
+        })
+
+        factory.update_implementation(updated_implementation).run(sender=admin)
         
