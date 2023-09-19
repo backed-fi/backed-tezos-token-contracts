@@ -37,13 +37,12 @@ def backed_token_factory_module():
         #
         @sp.entrypoint
         def deploy_token(self, tokenOwner, metadata, name, symbol, icon, decimals):
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
+            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_Factory_NotAdmin"
 
             token_metadata = {
                 "decimals": decimals,  # Mandatory by the spec
-                "name": name,  # Recommended
-                "symbol": symbol,  # Recommended
-                # Extra fields
+                "name": name,
+                "symbol": symbol,
                 "icon": icon,
             }
             token_metadata_storage = sp.big_map(
@@ -77,6 +76,11 @@ def backed_token_factory_module():
                 )
             )
             # sp.emit(sp.record(address=address, name=name, symbol=symbol), tag="NewToken")
-        # @sp.entrypoint
-        # def deploy_token(self, tokenOwner, metadata, name, symbol, icon, decimals):
+
+        @sp.entrypoint
+        def update_implementation(self, implementation):
+            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_Factory_NotAdmin"
+
+            self.data.implementation = implementation
+
             

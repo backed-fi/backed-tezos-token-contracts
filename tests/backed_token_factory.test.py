@@ -1,6 +1,5 @@
 import smartpy as sp
 from contracts.backed_token_factory import backed_token_factory_module
-# from contracts.backed_token_proxy import backed_token_proxy_module
 from contracts.backed_token import backed_token_module
 from contracts.utils.admin import admin_module 
 from contracts.utils.pause import pause_module 
@@ -9,6 +8,8 @@ from contracts.actions.mint import mint_module
 from contracts.actions.burn import burn_module
 from contracts.actions.approve import approve_module
 from contracts.actions.transfer import transfer_module
+
+from contracts.shared.storage import storage_module
 
 @sp.module
 def test_module():
@@ -26,6 +27,7 @@ if "templates" not in __name__:
         sc = sp.test_scenario([
             admin_module,
             pause_module,
+            storage_module,
             mint_module,
             burn_module,
             approve_module,
