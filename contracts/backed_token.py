@@ -4,6 +4,7 @@
 import smartpy as sp
 from contracts.utils.admin import admin_module
 from contracts.utils.pause import pause_module
+from contracts.shared.storage import storage_module
 
 # The metadata below is just an example, it serves as a base,
 # the contents are used to build the metadata JSON that users
@@ -18,16 +19,10 @@ TZIP16_Metadata_Base = {
 
 @sp.module
 def backed_token_module():
-    BackedTokenStorage: type = sp.record(
-        balances=sp.big_map[sp.address, sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat)],
-        total_supply=sp.nat,
-        token_metadata=sp.big_map[sp.nat, sp.record(token_id=sp.nat, token_info=sp.map[sp.string, sp.bytes])],
-        metadata=sp.big_map[sp.string, sp.bytes],
-    )
     class CommonInterface(admin_module.AdminInterface):
         def __init__(self):
             admin_module.AdminInterface.__init__(self)
-            sp.cast(self.data.storage, BackedTokenStorage)
+            sp.cast(self.data.storage, storage_module.backed_token)
             self.data.storage.balances = sp.big_map()
             self.data.storage.total_supply = 0
             self.data.storage.token_metadata = sp.big_map()
@@ -54,7 +49,7 @@ def backed_token_module():
             contract_metadata spec: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md
             """
             CommonInterface.__init__(self)
-            sp.cast(registry, sp.big_map[sp.string, sp.record(action=sp.lambda_[sp.record(storage=BackedTokenStorage, data=sp.bytes), BackedTokenStorage], only_admin=sp.bool)])
+            sp.cast(registry, sp.big_map[sp.string, sp.record(action=sp.lambda_[sp.record(storage=storage_module.backed_token, data=sp.bytes), storage_module.backed_token], only_admin=sp.bool)])
 
             self.data.registry = registry
             self.data.storage.metadata = metadata
@@ -80,19 +75,19 @@ def backed_token_module():
 
         @sp.entrypoint
         def execute(self, actionName, data):
-            assert not self.is_paused_(), "FA1.2_Paused"
+            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
 
             actionEntry = self.data.registry[actionName]
 
             if actionEntry.only_admin:
-                assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
+                assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
 
             self.invoke(sp.record(actionName=actionName, data=data))
   
 
         @sp.entrypoint
         def transfer(self, param):
-            assert not self.is_paused_(), "FA1.2_Paused"
+            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
 
             sp.cast(
                 param,
@@ -107,7 +102,7 @@ def backed_token_module():
 
         @sp.entrypoint
         def approve(self, param):
-            assert not self.is_paused_(), "FA1.2_Paused"
+            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
 
             sp.cast(
                 param,
@@ -155,7 +150,7 @@ def backed_token_module():
         @sp.entrypoint
         def update_metadata(self, key, value):
             """An entrypoint to allow the contract metadata to be updated."""
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
+            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
             self.data.storage.metadata[key] = value
 
     class BackedToken(admin_module.Admin, pause_module.Pause, Fa1_2, ChangeMetadata):

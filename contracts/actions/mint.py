@@ -1,23 +1,15 @@
 import smartpy as sp
-# from contracts.actions.shared import shared_module
-# from contracts.shared.error_messages import CANNOT_UNPACK
+from contracts.shared.storage import storage_module
 
 @sp.module
 def mint_module():
-    BackedTokenStorage: type = sp.record(
-        balances=sp.big_map[sp.address, sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat)],
-        total_supply=sp.nat,
-        token_metadata=sp.big_map[sp.nat, sp.record(token_id=sp.nat, token_info=sp.map[sp.string, sp.bytes])],
-        metadata=sp.big_map[sp.string, sp.bytes],
-
-    )
     MintParams: type = sp.record(address=sp.address, value=sp.nat)
 
     @sp.effects()
     def mint(storage, data):
-        sp.cast(storage, BackedTokenStorage)
+        sp.cast(storage, storage_module.backed_token)
         sp.cast(data, sp.bytes)
-        mintParams = sp.unpack(data, MintParams).unwrap_some(error="CANNOT_UNPACK")
+        mintParams = sp.unpack(data, MintParams).unwrap_some(error="BACKED_TOKEN_Mint_CannotUnpackParams")
         
         updated_storage = storage
 

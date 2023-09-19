@@ -1,22 +1,15 @@
 import smartpy as sp
-from contracts.actions.shared import shared_module
+from contracts.shared.storage import storage_module
 
 @sp.module
 def burn_module():
-    BackedTokenStorage: type = sp.record(
-        balances=sp.big_map[sp.address, sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat)],
-        total_supply=sp.nat,
-        token_metadata=sp.big_map[sp.nat, sp.record(token_id=sp.nat, token_info=sp.map[sp.string, sp.bytes])],
-        metadata=sp.big_map[sp.string, sp.bytes],
-
-    )
     BurnParams: type = sp.record(address=sp.address, value=sp.nat)
 
     @sp.effects()
     def burn(storage, data):
-        sp.cast(storage, BackedTokenStorage)
+        sp.cast(storage, storage_module.backed_token)
         sp.cast(data, sp.bytes)
-        burnParams = sp.unpack(data, BurnParams).unwrap_some(error="CANNOT_UNPACK")
+        burnParams = sp.unpack(data, BurnParams).unwrap_some(error="BACKED_TOKEN_Burn_CannotUnpackParams")
 
         updated_storage = storage
         
@@ -25,7 +18,7 @@ def burn_module():
         )
         receiver_balance.balance = sp.as_nat(
             receiver_balance.balance - burnParams.value,
-            error="FA1.2_InsufficientBalance",
+            error="BACKED_TOKEN_Burn_InsufficientBalance",
         )
         updated_storage.balances[burnParams.address] = receiver_balance
         updated_storage.total_supply = sp.as_nat(updated_storage.total_supply - burnParams.value)
