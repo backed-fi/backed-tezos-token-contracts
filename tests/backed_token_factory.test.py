@@ -36,7 +36,7 @@ def test_module():
         )
         receiver_balance.balance += mintParams.value * 2
         updated_storage.balances[mintParams.address] = receiver_balance
-        updated_storage.total_supply += mintParams.value
+        updated_storage.total_supply += mintParams.value * 2
 
         return updated_storage
 

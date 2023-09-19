@@ -77,7 +77,7 @@ def backed_token_module():
         def execute(self, actionName, data):
             assert not self.is_paused_(), "BACKED_TOKEN_Paused"
 
-            actionEntry = self.data.registry[actionName]
+            actionEntry = self.data.registry.get(actionName, error="BACKED_TOKEN_UnknownAction")
 
             if actionEntry.only_admin:
                 assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
@@ -160,6 +160,11 @@ def backed_token_module():
             ChangeMetadata.__init__(self)
             Fa1_2.__init__(self, metadata, ledger, token_metadata, registry)
 
+        @sp.entrypoint
+        def update_action(self, actionName, actionEntry):
+            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
+            
+            self.data.registry[actionName] = actionEntry
 
 
 
