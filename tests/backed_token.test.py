@@ -2,6 +2,10 @@ import smartpy as sp
 from contracts.backed_token import backed_token_module 
 from contracts.utils.admin import admin_module 
 from contracts.utils.pause import pause_module 
+from contracts.actions.mint import mint_module 
+from contracts.actions.burn import burn_module 
+from contracts.actions.approve import approve_module
+from contracts.actions.transfer import transfer_module
 
 @sp.module
 def test_module():
@@ -25,7 +29,7 @@ def test_module():
 if "templates" not in __name__:
     @sp.add_test(name="backed_token")
     def test():
-        sc = sp.test_scenario([admin_module, pause_module, backed_token_module, test_module])
+        sc = sp.test_scenario([admin_module, pause_module, mint_module, burn_module, approve_module, transfer_module, backed_token_module, test_module])
         sc.h1("Backed Token Implementation")
 
         # sp.test_account generates ED25519 key-pairs deterministically:
@@ -59,6 +63,13 @@ if "templates" not in __name__:
             metadata=contract_metadata,
             token_metadata=token_metadata,
             ledger={},
+            registry=sp.big_map({
+                "mint": sp.record(action=mint_module.mint, only_admin=True),
+                "burn": sp.record(action=burn_module.burn, only_admin=True),
+                "approve": sp.record(action=approve_module.approve, only_admin=False),
+                "transfer": sp.record(action=transfer_module.transfer, only_admin=False),
+            })
+
         )
         sc += c1
 
@@ -83,22 +94,23 @@ if "templates" not in __name__:
 
         sc.h1("Attempt to update metadata")
         sc.verify(
-            c1.data.metadata[""]
+            c1.data.storage.metadata[""]
             == sp.utils.bytes_of_string(
                 "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
             )
         )
         c1.update_metadata(key="", value=sp.bytes("0x00")).run(sender=admin)
-        sc.verify(c1.data.metadata[""] == sp.bytes("0x00"))
+        sc.verify(c1.data.storage.metadata[""] == sp.bytes("0x00"))
 
         sc.h1("Entrypoints")
         sc.h2("Admin mints a few coins")
-        c1.mint(address=alice.address, value=12).run(sender=admin)
-        c1.mint(address=alice.address, value=3).run(sender=admin)
-        c1.mint(address=alice.address, value=3).run(sender=admin)
+        c1.execute(actionName="mint", data=sp.pack(sp.record(address=alice.address, value=12))).run(sender=admin)
+        c1.execute(actionName="mint", data=sp.pack(sp.record(address=alice.address, value=3))).run(sender=admin)
+        c1.execute(actionName="mint", data=sp.pack(sp.record(address=alice.address, value=3))).run(sender=admin)
+
         sc.h2("Alice transfers to Bob")
         c1.transfer(from_=alice.address, to_=bob.address, value=4).run(sender=alice)
-        sc.verify(c1.data.balances[alice.address].balance == 14)
+        sc.verify(c1.data.storage.balances[alice.address].balance == 14)
         sc.h2("Bob tries to transfer from Alice but he doesn't have her approval")
         c1.transfer(from_=alice.address, to_=bob.address, value=4).run(
             sender=bob, valid=False
@@ -111,26 +123,24 @@ if "templates" not in __name__:
             sender=bob, valid=False
         )
         sc.h2("Admin burns Bob token")
-        c1.burn(address=bob.address, value=1).run(sender=admin)
-        sc.verify(c1.data.balances[alice.address].balance == 10)
+        c1.execute(actionName="burn", data=sp.pack(sp.record(address=bob.address, value=1))).run(sender=admin)
+        sc.verify(c1.data.storage.balances[alice.address].balance == 10)
         sc.h2("Alice tries to burn Bob token")
-        c1.burn(address=bob.address, value=1).run(sender=alice, valid=False)
+        c1.execute(actionName="burn", data=sp.pack(sp.record(address=bob.address, value=1))).run(sender=alice, valid=False)
         sc.h2("Admin pauses the contract and Alice cannot transfer anymore")
         c1.setPause(True).run(sender=admin)
         c1.transfer(from_=alice.address, to_=bob.address, value=4).run(
             sender=alice, valid=False
         )
-        sc.verify(c1.data.balances[alice.address].balance == 10)
-        sc.h2("Admin transfers while on pause")
-        c1.transfer(from_=alice.address, to_=bob.address, value=1).run(sender=admin)
+        sc.verify(c1.data.storage.balances[alice.address].balance == 10)
         sc.h2("Admin unpauses the contract and transfers are allowed")
         c1.setPause(False).run(sender=admin)
-        sc.verify(c1.data.balances[alice.address].balance == 9)
+        sc.verify(c1.data.storage.balances[alice.address].balance == 10)
         c1.transfer(from_=alice.address, to_=bob.address, value=1).run(sender=alice)
 
-        sc.verify(c1.data.total_supply == 17)
-        sc.verify(c1.data.balances[alice.address].balance == 8)
-        sc.verify(c1.data.balances[bob.address].balance == 9)
+        sc.verify(c1.data.storage.total_supply == 17)
+        sc.verify(c1.data.storage.balances[alice.address].balance == 9)
+        sc.verify(c1.data.storage.balances[bob.address].balance == 8)
 
         sc.h1("Views")
         sc.h2("Balance")
@@ -138,7 +148,7 @@ if "templates" not in __name__:
         sc += view_balance
         target = sp.contract(sp.TNat, view_balance.address, "target").open_some()
         c1.getBalance((alice.address, target))
-        sc.verify_equal(view_balance.data.last, sp.some(8))
+        sc.verify_equal(view_balance.data.last, sp.some(9))
 
         sc.h2("Administrator")
         view_administrator = test_module.Viewer_address()

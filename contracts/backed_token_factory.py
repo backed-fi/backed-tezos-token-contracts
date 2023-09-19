@@ -1,10 +1,12 @@
 import smartpy as sp
 from contracts.utils.admin import admin_module
 from contracts.backed_token import backed_token_module
-from contracts.backed_token_proxy import backed_token_proxy_module
+# from contracts.backed_token_proxy import backed_token_proxy_module
 
 from contracts.actions.mint import mint_module
 from contracts.actions.burn import burn_module
+from contracts.actions.approve import approve_module 
+from contracts.actions.transfer import transfer_module 
 
 @sp.module
 def backed_token_factory_module():
@@ -19,8 +21,9 @@ def backed_token_factory_module():
         #
         # @param administrator The address of the account that will be set as owner of the contract
         #
-        def __init__(self, administrator):
+        def __init__(self, implementation, administrator):
             admin_module.Admin.__init__(self, administrator)
+            self.data.implementation = implementation
         
         #
         # @dev Deploy and configures new instance of BackedFi Token. Callable only by the factory owner
@@ -34,7 +37,8 @@ def backed_token_factory_module():
         #
         @sp.entrypoint
         def deploy_token(self, tokenOwner, metadata, name, symbol, icon, decimals):
-            # assert tokenOwner != sp.address("0"), "Factory: address should not be 0"
+            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
+
             token_metadata = {
                 "decimals": decimals,  # Mandatory by the spec
                 "name": name,  # Recommended
@@ -55,28 +59,24 @@ def backed_token_factory_module():
                     sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat),
                 ],
             )
-
             
             newToken = sp.create_contract(
                 backed_token_module.BackedToken,
                 None,
                 sp.mutez(0),
-                sp.record(administrator=tokenOwner, paused = False, balances = balances, metadata = metadata_storage, total_supply = 0, token_metadata = token_metadata_storage)
+                sp.record(
+                    administrator=tokenOwner,
+                    paused=False,
+                    storage=sp.record(
+                        balances=balances,
+                        metadata=metadata_storage,
+                        total_supply=0,
+                        token_metadata=token_metadata_storage,
+                    ),
+                    registry=self.data.implementation
+                )
             )
-
-            registry = sp.big_map({
-                "mint": mint_module.mint,
-                "burn": burn_module.burn
-            })
-
-
-            proxyAdmin = sp.create_contract(
-                backed_token_proxy_module.BackedTokenProxy,
-                None,
-                sp.mutez(0),
-                sp.record(administrator=tokenOwner, registry=registry, implementation=newToken)
-            )
-
             # sp.emit(sp.record(address=address, name=name, symbol=symbol), tag="NewToken")
-        # TODO: updateImplementation
+        # @sp.entrypoint
+        # def deploy_token(self, tokenOwner, metadata, name, symbol, icon, decimals):
             

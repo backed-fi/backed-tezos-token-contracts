@@ -4,15 +4,28 @@ import smartpy as sp
 
 @sp.module
 def mint_module():
-    ExecuteParams: type = sp.record(address=sp.address, data=sp.bytes)
+    BackedTokenStorage: type = sp.record(
+        balances=sp.big_map[sp.address, sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat)],
+        total_supply=sp.nat,
+        token_metadata=sp.big_map[sp.nat, sp.record(token_id=sp.nat, token_info=sp.map[sp.string, sp.bytes])],
+        metadata=sp.big_map[sp.string, sp.bytes],
+
+    )
     MintParams: type = sp.record(address=sp.address, value=sp.nat)
 
-    @sp.effects(with_operations=True)
-    def mint(data):
+    @sp.effects()
+    def mint(storage, data):
+        sp.cast(storage, BackedTokenStorage)
         sp.cast(data, sp.bytes)
-        executeParams = sp.unpack(data, ExecuteParams).unwrap_some(error="CANNOT_UNPACK")
-        mintParams= sp.unpack(executeParams.data, MintParams).unwrap_some(error="Cannot UNPACK")
+        mintParams = sp.unpack(data, MintParams).unwrap_some(error="CANNOT_UNPACK")
         
-        dest = sp.contract(sp.record(value=sp.nat, address=sp.address), executeParams.address, entrypoint="mint")
+        updated_storage = storage
 
-        sp.transfer(sp.record(value=mintParams.value, address=mintParams.address), sp.tez(0), dest.unwrap_some())
+        receiver_balance = updated_storage.balances.get(
+            mintParams.address, default=sp.record(balance=0, approvals={})
+        )
+        receiver_balance.balance += mintParams.value
+        updated_storage.balances[mintParams.address] = receiver_balance
+        updated_storage.total_supply += mintParams.value
+
+        return updated_storage
