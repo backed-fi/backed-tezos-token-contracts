@@ -2,6 +2,9 @@
 # Inspired by https://gitlab.com/tzip/tzip/blob/master/A/FA1.2.md
 
 import smartpy as sp
+from contracts.utils.admin import admin_module
+from contracts.utils.pause import pause_module
+from contracts.shared.storage import storage_module
 
 # The metadata below is just an example, it serves as a base,
 # the contents are used to build the metadata JSON that users
@@ -14,65 +17,24 @@ TZIP16_Metadata_Base = {
     "interfaces": ["TZIP-007-2021-04-17", "TZIP-016-2021-04-17"],
 }
 
-
 @sp.module
-def module():
-    class AdminInterface(sp.Contract):
-        @sp.private(with_storage="read-only")
-        def is_administrator_(self, sender):
-            sp.cast(sp.sender, sp.address)
-            """Not standard, may be re-defined through inheritance."""
-            return True
-
-    class CommonInterface(AdminInterface):
+def backed_token_module():
+    class CommonInterface(admin_module.AdminInterface):
         def __init__(self):
-            AdminInterface.__init__(self)
-            self.data.balances = sp.cast(
-                sp.big_map(),
-                sp.big_map[
-                    sp.address,
-                    sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat),
-                ],
-            )
-            self.data.total_supply = 0
-            self.data.token_metadata = sp.cast(
-                sp.big_map(),
-                sp.big_map[
-                    sp.nat,
-                    sp.record(token_id=sp.nat, token_info=sp.map[sp.string, sp.bytes]),
-                ],
-            )
-            self.data.metadata = sp.cast(
-                sp.big_map(),
-                sp.big_map[sp.string, sp.bytes],
-            )
-            self.data.balances = sp.cast(
-                sp.big_map(),
-                sp.big_map[
-                    sp.address,
-                    sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat),
-                ],
-            )
-            self.data.total_supply = 0
-            self.data.token_metadata = sp.cast(
-                sp.big_map(),
-                sp.big_map[
-                    sp.nat,
-                    sp.record(token_id=sp.nat, token_info=sp.map[sp.string, sp.bytes]),
-                ],
-            )
-            self.data.metadata = sp.cast(
-                sp.big_map(),
-                sp.big_map[sp.string, sp.bytes],
-            )
-
+            admin_module.AdminInterface.__init__(self)
+            sp.cast(self.data.storage, storage_module.backed_token)
+            self.data.storage.balances = sp.big_map()
+            self.data.storage.total_supply = 0
+            self.data.storage.token_metadata = sp.big_map()
+            self.data.storage.metadata = sp.big_map()
+           
         @sp.private(with_storage="read-only")
         def is_paused_(self):
             """Not standard, may be re-defined through inheritance."""
             return False
 
     class Fa1_2(CommonInterface):
-        def __init__(self, metadata, ledger, token_metadata):
+        def __init__(self, metadata, ledger, token_metadata, registry):
             """
             token_metadata spec: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-12/tzip-12.md#token-metadata
             Token-specific metadata is stored/presented as a Michelson value of type (map string bytes).
@@ -87,69 +49,74 @@ def module():
             contract_metadata spec: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md
             """
             CommonInterface.__init__(self)
-            self.data.metadata = metadata
-            self.data.token_metadata = sp.big_map(
+            sp.cast(registry, sp.big_map[sp.string, sp.record(action=sp.lambda_[sp.record(storage=storage_module.backed_token, data=sp.bytes), storage_module.backed_token], only_admin=sp.bool)])
+
+            self.data.registry = registry
+            self.data.storage.metadata = metadata
+            self.data.storage.token_metadata = sp.big_map(
                 {0: sp.record(token_id=0, token_info=token_metadata)}
             )
 
             for owner in ledger.items():
-                self.data.balances[owner.key] = owner.value
-                self.data.total_supply += owner.value.balance
+                self.data.storage.balances[owner.key] = owner.value
+                self.data.storage.total_supply += owner.value.balance
 
             # TODO: Activate when this feature is implemented.
             # self.init_metadata("metadata", metadata)
 
+
+        @sp.private(with_storage='read-write')
+        def invoke(self, params):
+            sp.cast(params, sp.record(actionName=sp.string, data=sp.bytes))
+
+            updated_storage = self.data.registry[params.actionName].action(sp.record(storage=self.data.storage, data=params.data))
+
+            self.data.storage = updated_storage
+
+        @sp.entrypoint
+        def execute(self, actionName, data):
+            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
+
+            actionEntry = self.data.registry[actionName]
+
+            if actionEntry.only_admin:
+                assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
+
+            self.invoke(sp.record(actionName=actionName, data=data))
+  
+
         @sp.entrypoint
         def transfer(self, param):
+            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
+
             sp.cast(
                 param,
                 sp.record(from_=sp.address, to_=sp.address, value=sp.nat).layout(
                     ("from_ as from", ("to_ as to", "value"))
                 ),
             )
-            balance_from = self.data.balances.get(
-                param.from_, default=sp.record(balance=0, approvals={})
-            )
-            balance_to = self.data.balances.get(
-                param.to_, default=sp.record(balance=0, approvals={})
-            )
-            balance_from.balance = sp.as_nat(
-                balance_from.balance - param.value, error="FA1.2_InsufficientBalance"
-            )
-            balance_to.balance += param.value
-            if not self.is_administrator_(sp.sender):
-                assert not self.is_paused_(), "FA1.2_Paused"
-                if param.from_ != sp.sender:
-                    balance_from.approvals[sp.sender] = sp.as_nat(
-                        balance_from.approvals[sp.sender] - param.value,
-                        error="FA1.2_NotAllowed",
-                    )
-            self.data.balances[param.from_] = balance_from
-            self.data.balances[param.to_] = balance_to
+            data = sp.pack(param)
+
+            self.invoke(sp.record(actionName='transfer', data=data))
+
 
         @sp.entrypoint
         def approve(self, param):
+            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
+
             sp.cast(
                 param,
                 sp.record(spender=sp.address, value=sp.nat).layout(
                     ("spender", "value")
                 ),
             )
-            assert not self.is_paused_(), "FA1.2_Paused"
-            spender_balance = self.data.balances.get(
-                sp.sender, default=sp.record(balance=0, approvals={})
-            )
-            alreadyApproved = spender_balance.approvals.get(param.spender, default=0)
-            assert (
-                alreadyApproved == 0 or param.value == 0
-            ), "FA1.2_UnsafeAllowanceChange"
-            spender_balance.approvals[param.spender] = param.value
-            self.data.balances[sp.sender] = spender_balance
+            data = sp.pack(param)
+            self.invoke(sp.record(actionName='approve', data=data))
 
         @sp.entrypoint
         def getBalance(self, param):
             (address, callback) = param
-            result = self.data.balances.get(
+            result = self.data.storage.balances.get(
                 address, default=sp.record(balance=0, approvals={})
             ).balance
             sp.transfer(result, sp.tez(0), callback)
@@ -157,7 +124,7 @@ def module():
         @sp.entrypoint
         def getAllowance(self, param):
             (args, callback) = param
-            result = self.data.balances.get(
+            result = self.data.storage.balances.get(
                 args.owner, default=sp.record(balance=0, approvals={})
             ).approvals.get(args.spender, default=0)
             sp.transfer(result, sp.tez(0), callback)
@@ -165,87 +132,16 @@ def module():
         @sp.entrypoint
         def getTotalSupply(self, param):
             sp.cast(param, sp.pair[sp.unit, sp.contract[sp.nat]])
-            sp.transfer(self.data.total_supply, sp.tez(0), sp.snd(param))
+            sp.transfer(self.data.storage.total_supply, sp.tez(0), sp.snd(param))
 
         @sp.offchain_view()
         def token_metadata(self, token_id):
             """Return the token-metadata URI for the given token. (token_id must be 0)."""
             sp.cast(token_id, sp.nat)
-            return self.data.token_metadata[token_id]
+            return self.data.storage.token_metadata[token_id]
     ##########
     # Mixins #
     ##########
-
-    class Admin(sp.Contract):
-        def __init__(self, administrator):
-            self.data.administrator = administrator
-
-        @sp.private(with_storage="read-only")
-        def is_administrator_(self, sender):
-            return sender == self.data.administrator
-
-        @sp.entrypoint
-        def setAdministrator(self, params):
-            sp.cast(params, sp.address)
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
-            self.data.administrator = params
-
-        @sp.entrypoint()
-        def getAdministrator(self, param):
-            sp.cast(param, sp.pair[sp.unit, sp.contract[sp.address]])
-            sp.transfer(self.data.administrator, sp.tez(0), sp.snd(param))
-
-        @sp.onchain_view()
-        def get_administrator(self):
-            return self.data.administrator
-
-    class Pause(AdminInterface):
-        def __init__(self):
-            AdminInterface.__init__(self)
-            self.data.paused = False
-
-        @sp.private(with_storage="read-only")
-        def is_paused_(self):
-            return self.data.paused
-
-        @sp.entrypoint
-        def setPause(self, param):
-            sp.cast(param, sp.bool)
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
-            self.data.paused = param
-
-    class Mint(CommonInterface):
-        def __init__(self):
-            CommonInterface.__init__(self)
-
-        @sp.entrypoint
-        def mint(self, param):
-            sp.cast(param, sp.record(address=sp.address, value=sp.nat))
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
-            receiver_balance = self.data.balances.get(
-                param.address, default=sp.record(balance=0, approvals={})
-            )
-            receiver_balance.balance += param.value
-            self.data.balances[param.address] = receiver_balance
-            self.data.total_supply += param.value
-
-    class Burn(CommonInterface):
-        def __init__(self):
-            CommonInterface.__init__(self)
-
-        @sp.entrypoint
-        def burn(self, param):
-            sp.cast(param, sp.record(address=sp.address, value=sp.nat))
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
-            receiver_balance = self.data.balances.get(
-                param.address, default=sp.record(balance=0, approvals={})
-            )
-            receiver_balance.balance = sp.as_nat(
-                receiver_balance.balance - param.value,
-                error="FA1.2_InsufficientBalance",
-            )
-            self.data.balances[param.address] = receiver_balance
-            self.data.total_supply = sp.as_nat(self.data.total_supply - param.value)
 
     class ChangeMetadata(CommonInterface):
         def __init__(self):
@@ -254,15 +150,17 @@ def module():
         @sp.entrypoint
         def update_metadata(self, key, value):
             """An entrypoint to allow the contract metadata to be updated."""
-            assert self.is_administrator_(sp.sender), "Fa1.2_NotAdmin"
-            self.data.metadata[key] = value
+            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
+            self.data.storage.metadata[key] = value
 
-    class BackedToken(Admin, Pause, Fa1_2, Mint, Burn, ChangeMetadata):
-        def __init__(self, administrator, metadata, ledger, token_metadata):
+    class BackedToken(admin_module.Admin, pause_module.Pause, Fa1_2, ChangeMetadata):
+        def __init__(self, administrator, metadata, ledger, token_metadata, registry):
+            admin_module.Admin.__init__(self, administrator)
+            pause_module.Pause.__init__(self)
             ChangeMetadata.__init__(self)
-            Burn.__init__(self)
-            Mint.__init__(self)
-            Fa1_2.__init__(self, metadata, ledger, token_metadata)
-            Pause.__init__(self)
-            Admin.__init__(self, administrator)
+            Fa1_2.__init__(self, metadata, ledger, token_metadata, registry)
+
+
+
+
   
