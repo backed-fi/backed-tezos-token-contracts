@@ -1,13 +1,13 @@
 import smartpy as sp
-from contracts.shared.storage import storage_module
+from contracts.shared.storage import StorageModule
 
 @sp.module
-def approve_module():
+def ApproveModule():
     ApproveParams: type = sp.record(spender=sp.address, value=sp.nat).layout(("spender", "value"))
 
     @sp.effects()
     def approve(storage, data):
-        sp.cast(storage, storage_module.backed_token)
+        sp.cast(storage, StorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         transferParams = sp.unpack(data, ApproveParams).unwrap_some(error="BACKED_TOKEN_Approve_CannotUnpackParams")
       

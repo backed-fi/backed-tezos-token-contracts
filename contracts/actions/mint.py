@@ -1,13 +1,15 @@
 import smartpy as sp
-from contracts.shared.storage import storage_module
+from contracts.shared.storage import StorageModule
 
 @sp.module
-def mint_module():
+def MintModule():
     MintParams: type = sp.record(address=sp.address, value=sp.nat)
 
     @sp.effects()
     def mint(storage, data):
-        sp.cast(storage, storage_module.backed_token)
+        assert sp.sender == storage.roles.minter, "BACKED_TOKEN_Mint_NotMinter"
+
+        sp.cast(storage, StorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         mintParams = sp.unpack(data, MintParams).unwrap_some(error="BACKED_TOKEN_Mint_CannotUnpackParams")
         

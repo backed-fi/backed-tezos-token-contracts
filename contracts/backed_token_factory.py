@@ -1,15 +1,17 @@
 import smartpy as sp
-from contracts.utils.admin import admin_module
-from contracts.backed_token import backed_token_module
-# from contracts.backed_token_proxy import backed_token_proxy_module
 
-from contracts.actions.mint import mint_module
-from contracts.actions.burn import burn_module
-from contracts.actions.approve import approve_module 
-from contracts.actions.transfer import transfer_module 
+from contracts.backed_token import BackedTokenModule
+
+from contracts.utils.ownable import OwnableModule
+from contracts.utils.pausable import PausableModule
+
+from contracts.actions.mint import MintModule
+from contracts.actions.burn import BurnModule
+from contracts.actions.approve import ApproveModule 
+from contracts.actions.transfer import TransferModule 
 
 @sp.module
-def backed_token_factory_module():
+def BackedTokenFactoryModule():
     # @dev
     #
     # Factory contract, used for creating new, upgradable tokens.
@@ -17,12 +19,12 @@ def backed_token_factory_module():
     # The contract contains one role:
     #  - An administrator, which can deploy new tokens
     #
-    class BackedFactory(admin_module.Admin):
+    class BackedFactory(OwnableModule.Ownable):
         #
         # @param administrator The address of the account that will be set as owner of the contract
         #
         def __init__(self, implementation, administrator):
-            admin_module.Admin.__init__(self, administrator)
+            OwnableModule.Ownable.__init__(self, administrator)
             self.data.implementation = implementation
         
         #
@@ -36,8 +38,8 @@ def backed_token_factory_module():
         # @param tokenOwner    The address of the account to which the owner role will be assigned
         #
         @sp.entrypoint
-        def deploy_token(self, tokenOwner, metadata, name, symbol, icon, decimals):
-            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_Factory_NotAdmin"
+        def deploy_token(self, tokenOwner, minter, burner, pauser, metadata, name, symbol, icon, decimals):
+            assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
 
             token_metadata = {
                 "decimals": decimals,  # Mandatory by the spec
@@ -60,17 +62,19 @@ def backed_token_factory_module():
             )
             
             newToken = sp.create_contract(
-                backed_token_module.BackedToken,
+                BackedTokenModule.BackedToken,
                 None,
                 sp.mutez(0),
                 sp.record(
-                    administrator=tokenOwner,
+                    owner=tokenOwner,
+                    pauser=pauser,
                     paused=False,
                     storage=sp.record(
                         balances=balances,
                         metadata=metadata_storage,
                         total_supply=0,
                         token_metadata=token_metadata_storage,
+                        roles=sp.record(minter=minter, burner=burner)
                     ),
                     registry=self.data.implementation
                 )
@@ -78,8 +82,8 @@ def backed_token_factory_module():
             # sp.emit(sp.record(address=address, name=name, symbol=symbol), tag="NewToken")
 
         @sp.entrypoint
-        def update_implementation(self, implementation):
-            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_Factory_NotAdmin"
+        def updateImplementation(self, implementation):
+            assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
 
             self.data.implementation = implementation
 

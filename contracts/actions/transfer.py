@@ -1,13 +1,13 @@
 import smartpy as sp
-from contracts.shared.storage import storage_module
+from contracts.shared.storage import StorageModule
 
 @sp.module
-def transfer_module():
+def TransferModule():
     TransferParams: type = sp.record(from_=sp.address, to_=sp.address, value=sp.nat).layout(("from_ as from", ("to_ as to", "value")))
 
     @sp.effects()
     def transfer(storage, data):
-        sp.cast(storage, storage_module.backed_token)
+        sp.cast(storage, StorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         transferParams = sp.unpack(data, TransferParams).unwrap_some(error="BACKED_TOKEN_Transfer_CannotUnpackParams")
       

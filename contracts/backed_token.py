@@ -2,9 +2,9 @@
 # Inspired by https://gitlab.com/tzip/tzip/blob/master/A/FA1.2.md
 
 import smartpy as sp
-from contracts.utils.admin import admin_module
-from contracts.utils.pause import pause_module
-from contracts.shared.storage import storage_module
+from contracts.utils.ownable import OwnableModule
+from contracts.utils.pausable import PausableModule
+from contracts.shared.storage import StorageModule
 
 # The metadata below is just an example, it serves as a base,
 # the contents are used to build the metadata JSON that users
@@ -18,23 +18,20 @@ TZIP16_Metadata_Base = {
 }
 
 @sp.module
-def backed_token_module():
-    class CommonInterface(admin_module.AdminInterface):
-        def __init__(self):
-            admin_module.AdminInterface.__init__(self)
-            sp.cast(self.data.storage, storage_module.backed_token)
+def BackedTokenModule():
+    class CommonInterface(OwnableModule.OwnableInterface, PausableModule.PausableInterface):
+        def __init__(self, minter, burner):
+            OwnableModule.OwnableInterface.__init__(self)
+            PausableModule.PausableInterface.__init__(self)
+            sp.cast(self.data.storage, StorageModule.BackedToken)
             self.data.storage.balances = sp.big_map()
             self.data.storage.total_supply = 0
             self.data.storage.token_metadata = sp.big_map()
             self.data.storage.metadata = sp.big_map()
+            self.data.storage.roles = sp.record(minter=minter, burner=burner)
            
-        @sp.private(with_storage="read-only")
-        def is_paused_(self):
-            """Not standard, may be re-defined through inheritance."""
-            return False
-
     class Fa1_2(CommonInterface):
-        def __init__(self, metadata, ledger, token_metadata, registry):
+        def __init__(self, metadata, ledger, token_metadata, registry, minter, burner):
             """
             token_metadata spec: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-12/tzip-12.md#token-metadata
             Token-specific metadata is stored/presented as a Michelson value of type (map string bytes).
@@ -48,8 +45,8 @@ def backed_token_module():
 
             contract_metadata spec: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md
             """
-            CommonInterface.__init__(self)
-            sp.cast(registry, sp.big_map[sp.string, sp.record(action=sp.lambda_[sp.record(storage=storage_module.backed_token, data=sp.bytes), storage_module.backed_token], only_admin=sp.bool)])
+            CommonInterface.__init__(self, minter, burner)
+            sp.cast(registry, sp.big_map[sp.string, sp.record(action=sp.lambda_[sp.record(storage=StorageModule.BackedToken, data=sp.bytes), StorageModule.BackedToken], only_admin=sp.bool)])
 
             self.data.registry = registry
             self.data.storage.metadata = metadata
@@ -75,19 +72,19 @@ def backed_token_module():
 
         @sp.entrypoint
         def execute(self, actionName, data):
-            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
+            assert not self.isPaused(), "BACKED_TOKEN_Paused"
 
             actionEntry = self.data.registry.get(actionName, error="BACKED_TOKEN_UnknownAction")
 
             if actionEntry.only_admin:
-                assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
+                assert self.isOwner(sp.sender), "BACKED_TOKEN_NotAdmin"
 
             self.invoke(sp.record(actionName=actionName, data=data))
   
 
         @sp.entrypoint
         def transfer(self, param):
-            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
+            assert not self.isPaused(), "BACKED_TOKEN_Paused"
 
             sp.cast(
                 param,
@@ -102,7 +99,7 @@ def backed_token_module():
 
         @sp.entrypoint
         def approve(self, param):
-            assert not self.is_paused_(), "BACKED_TOKEN_Paused"
+            assert not self.isPaused(), "BACKED_TOKEN_Paused"
 
             sp.cast(
                 param,
@@ -143,29 +140,22 @@ def backed_token_module():
     # Mixins #
     ##########
 
-    class ChangeMetadata(CommonInterface):
-        def __init__(self):
-            CommonInterface.__init__(self)
+    class BackedToken(OwnableModule.Ownable, PausableModule.Pausable, Fa1_2):
+        def __init__(self, owner, metadata, ledger, token_metadata, registry, minter, burner, pauser):
+            OwnableModule.Ownable.__init__(self, owner)
+            PausableModule.Pausable.__init__(self, pauser)
+            Fa1_2.__init__(self, metadata, ledger, token_metadata, registry, minter, burner)
 
         @sp.entrypoint
-        def update_metadata(self, key, value):
+        def updateMetadata(self, key, value):
             """An entrypoint to allow the contract metadata to be updated."""
-            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
+            assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
             self.data.storage.metadata[key] = value
 
-    class BackedToken(admin_module.Admin, pause_module.Pause, Fa1_2, ChangeMetadata):
-        def __init__(self, administrator, metadata, ledger, token_metadata, registry):
-            admin_module.Admin.__init__(self, administrator)
-            pause_module.Pause.__init__(self)
-            ChangeMetadata.__init__(self)
-            Fa1_2.__init__(self, metadata, ledger, token_metadata, registry)
-
         @sp.entrypoint
-        def update_action(self, actionName, actionEntry):
-            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_NotAdmin"
+        def updateAction(self, actionName, actionEntry):
+            assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
             
             self.data.registry[actionName] = actionEntry
-
-
 
   
