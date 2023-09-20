@@ -10,6 +10,9 @@ from contracts.actions.burn import BurnModule
 from contracts.actions.set_burner import SetBurnerModule 
 from contracts.actions.approve import ApproveModule
 from contracts.actions.transfer import TransferModule
+from contracts.actions.increase_allowance import IncreaseAllowanceModule
+from contracts.actions.decrease_allowance import DecreaseAllowanceModule
+from contracts.actions.set_terms import SetTermsModule
 
 from contracts.shared.storage import StorageModule
 
@@ -55,6 +58,9 @@ if "templates" not in __name__:
             SetBurnerModule,
             ApproveModule,
             TransferModule,
+            SetTermsModule,
+            IncreaseAllowanceModule,
+            DecreaseAllowanceModule,
             BackedTokenModule,
             BackedTokenFactoryModule,
             TestModule
@@ -73,9 +79,12 @@ if "templates" not in __name__:
             "transfer": sp.record(action=TransferModule.transfer, only_admin=False),
             "setMinter": sp.record(action=SetMinterModule.setMinter, only_admin=True),
             "setBurner": sp.record(action=SetBurnerModule.setBurner, only_admin=True),
+            "setTerms": sp.record(action=SetTermsModule.setTerms, only_admin=True),
+            "increaseAllowance": sp.record(action=IncreaseAllowanceModule.increaseAllowance, only_admin=False),
+            "decreaseAllowance": sp.record(action=DecreaseAllowanceModule.decreaseAllowance, only_admin=False),
         })
 
-        factory = BackedTokenFactoryModule.BackedFactory(administrator=admin.address, implementation=implementation)
+        factory = BackedTokenFactoryModule.BackedFactory(owner=admin.address, implementation=implementation)
 
         sc+= factory
 
@@ -109,6 +118,9 @@ if "templates" not in __name__:
             "transfer": sp.record(action=TransferModule.transfer, only_admin=False),
             "setMinter": sp.record(action=SetMinterModule.setMinter, only_admin=True),
             "setBurner": sp.record(action=SetBurnerModule.setBurner, only_admin=True),
+            "setTerms": sp.record(action=SetTermsModule.setTerms, only_admin=True),
+            "increaseAllowance": sp.record(action=IncreaseAllowanceModule.increaseAllowance, only_admin=False),
+            "decreaseAllowance": sp.record(action=DecreaseAllowanceModule.decreaseAllowance, only_admin=False),
         })
 
         factory.updateImplementation(updated_implementation).run(sender=admin)

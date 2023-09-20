@@ -7,5 +7,9 @@ def StorageModule():
         total_supply=sp.nat,
         token_metadata=sp.big_map[sp.nat, sp.record(token_id=sp.nat, token_info=sp.map[sp.string, sp.bytes])],
         metadata=sp.big_map[sp.string, sp.bytes],
-        roles=sp.record(minter=sp.address, burner=sp.address)
+        terms=sp.string,
+        roles=sp.record(minter=sp.address, burner=sp.address),
+        nonce=sp.big_map[sp.address, sp.nat],
+        delegateMode=sp.bool,
+        delegateWhitelist=sp.big_map[sp.address, sp.bool]
     )

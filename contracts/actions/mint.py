@@ -5,6 +5,12 @@ from contracts.shared.storage import StorageModule
 def MintModule():
     MintParams: type = sp.record(address=sp.address, value=sp.nat)
 
+    ##
+    # @dev Function to mint tokens. Allowed only for minter
+    #
+    # @param account   The address that will receive the minted tokens
+    # @param amount    The amount of tokens to mint
+    #
     @sp.effects()
     def mint(storage, data):
         assert sp.sender == storage.roles.minter, "BACKED_TOKEN_Mint_NotMinter"

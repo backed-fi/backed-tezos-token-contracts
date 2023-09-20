@@ -5,6 +5,13 @@ from contracts.shared.storage import StorageModule
 def BurnModule():
     BurnParams: type = sp.record(address=sp.address, value=sp.nat)
 
+    ##
+    # @dev Function to burn tokens. Allowed only for burner. The burned tokens
+    # must be from the burner (msg.sender), or from the contract itself
+    #
+    # @param account   The account from which the tokens will be burned
+    # @param amount    The amount of tokens to be burned
+    #
     @sp.effects()
     def burn(storage, data):
         assert sp.sender == storage.roles.burner, "BACKED_TOKEN_Burn_NotBurner"
