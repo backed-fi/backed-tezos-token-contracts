@@ -1,15 +1,26 @@
 import smartpy as sp
-from contracts.backed_token import backed_token_module 
-from contracts.utils.admin import admin_module 
-from contracts.utils.pause import pause_module 
-from contracts.actions.mint import mint_module 
-from contracts.actions.burn import burn_module 
-from contracts.actions.approve import approve_module
-from contracts.actions.transfer import transfer_module
-from contracts.shared.storage import storage_module
+from contracts.backed_token import BackedTokenModule 
+from contracts.utils.ownable import OwnableModule 
+from contracts.utils.pausable import PausableModule 
+from contracts.utils.nonce import NonceModule
+
+from contracts.actions.mint import MintModule 
+from contracts.actions.set_minter import SetMinterModule 
+from contracts.actions.burn import BurnModule 
+from contracts.actions.set_burner import SetBurnerModule 
+from contracts.actions.approve import ApproveModule
+from contracts.actions.transfer import TransferModule
+from contracts.actions.delegated_transfer import DelegatedTransferModule
+from contracts.actions.permit import PermitModule
+from contracts.actions.increase_allowance import IncreaseAllowanceModule
+from contracts.actions.decrease_allowance import DecreaseAllowanceModule
+from contracts.actions.set_terms import SetTermsModule
+from contracts.actions.set_delegate_mode import SetDelegateModeModule
+from contracts.actions.set_delegate_whitelist import SetDelegateWhitelistModule
+from contracts.shared.storage import StorageModule
 
 @sp.module
-def test_module():
+def TestModule():
     MintParams: type = sp.record(address=sp.address, value=sp.nat)\
 
     class Viewer_nat(sp.Contract):
@@ -30,7 +41,7 @@ def test_module():
 
     @sp.effects()
     def mint(storage, data):
-        sp.cast(storage, storage_module.backed_token)
+        sp.cast(storage, StorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         mintParams = sp.unpack(data, MintParams).unwrap_some(error="BACKED_TOKEN_Mint_CannotUnpackParams")
         
@@ -48,7 +59,27 @@ def test_module():
 if "templates" not in __name__:
     @sp.add_test(name="backed_token")
     def test():
-        sc = sp.test_scenario([admin_module, pause_module, storage_module, mint_module, burn_module, approve_module, transfer_module, backed_token_module, test_module])
+        sc = sp.test_scenario([
+            OwnableModule,
+            PausableModule,
+            NonceModule,
+            StorageModule,
+            MintModule,
+            SetMinterModule,
+            BurnModule,
+            SetBurnerModule,
+            ApproveModule,
+            TransferModule,
+            DelegatedTransferModule,
+            PermitModule,
+            SetTermsModule,
+            IncreaseAllowanceModule,
+            DecreaseAllowanceModule,
+            SetDelegateModeModule,
+            SetDelegateWhitelistModule,
+            BackedTokenModule,
+            TestModule
+        ])
         sc.h1("Backed Token Implementation")
 
         # sp.test_account generates ED25519 key-pairs deterministically:
@@ -77,18 +108,29 @@ if "templates" not in __name__:
             "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
         )
 
-        c1 = backed_token_module.BackedToken(
-            administrator=admin.address,
+        c1 = BackedTokenModule.BackedToken(
+            owner=admin.address,
             metadata=contract_metadata,
             token_metadata=token_metadata,
             ledger={},
-            registry=sp.big_map({
-                "mint": sp.record(action=mint_module.mint, only_admin=True),
-                "burn": sp.record(action=burn_module.burn, only_admin=True),
-                "approve": sp.record(action=approve_module.approve, only_admin=False),
-                "transfer": sp.record(action=transfer_module.transfer, only_admin=False),
-            })
-
+            implementation=sp.big_map({
+                "mint": sp.record(action=MintModule.mint, only_admin=False),
+                "burn": sp.record(action=BurnModule.burn, only_admin=False),
+                "approve": sp.record(action=ApproveModule.approve, only_admin=False),
+                "transfer": sp.record(action=TransferModule.transfer, only_admin=False),
+                "delegatedTransfer": sp.record(action=DelegatedTransferModule.delegatedTransfer, only_admin=False),
+                "permit": sp.record(action=PermitModule.permit, only_admin=False),
+                "setMinter": sp.record(action=SetMinterModule.setMinter, only_admin=True),
+                "setBurner": sp.record(action=SetBurnerModule.setBurner, only_admin=True),
+                "setTerms": sp.record(action=SetTermsModule.setTerms, only_admin=True),
+                "increaseAllowance": sp.record(action=IncreaseAllowanceModule.increaseAllowance, only_admin=False),
+                "decreaseAllowance": sp.record(action=DecreaseAllowanceModule.decreaseAllowance, only_admin=False),
+                "setDelegateMode": sp.record(action=SetDelegateModeModule.setDelegateMode, only_admin=True),
+                "setDelegateWhitelist": sp.record(action=SetDelegateWhitelistModule.setDelegateWhitelist, only_admin=True),
+            }),
+            minter=admin.address,
+            burner=admin.address,
+            pauser=admin.address
         )
         sc += c1
 
@@ -118,7 +160,7 @@ if "templates" not in __name__:
                 "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
             )
         )
-        c1.update_metadata(key="", value=sp.bytes("0x00")).run(sender=admin)
+        c1.updateMetadata(key="", value=sp.bytes("0x00")).run(sender=admin)
         sc.verify(c1.data.storage.metadata[""] == sp.bytes("0x00"))
 
         sc.h1("Entrypoints")
@@ -163,34 +205,74 @@ if "templates" not in __name__:
 
         sc.h1("Views")
         sc.h2("Balance")
-        view_balance = test_module.Viewer_nat()
+        view_balance = TestModule.Viewer_nat()
         sc += view_balance
         target = sp.contract(sp.TNat, view_balance.address, "target").open_some()
         c1.getBalance((alice.address, target))
         sc.verify_equal(view_balance.data.last, sp.some(9))
 
         sc.h2("Administrator")
-        view_administrator = test_module.Viewer_address()
+        view_administrator = TestModule.Viewer_address()
         sc += view_administrator
         target = sp.contract(
             sp.TAddress, view_administrator.address, "target"
         ).open_some()
-        c1.getAdministrator((sp.unit, target))
+        c1.getOwner((sp.unit, target))
         sc.verify_equal(view_administrator.data.last, sp.some(admin.address))
 
         sc.h2("Total Supply")
-        view_totalSupply = test_module.Viewer_nat()
+        view_totalSupply = TestModule.Viewer_nat()
         sc += view_totalSupply
         target = sp.contract(sp.TNat, view_totalSupply.address, "target").open_some()
         c1.getTotalSupply((sp.unit, target))
         sc.verify_equal(view_totalSupply.data.last, sp.some(17))
 
         sc.h2("Allowance")
-        view_allowance = test_module.Viewer_nat()
+        view_allowance = TestModule.Viewer_nat()
         sc += view_allowance
         target = sp.contract(sp.TNat, view_allowance.address, "target").open_some()
         c1.getAllowance((sp.record(owner=alice.address, spender=bob.address), target))
         sc.verify_equal(view_allowance.data.last, sp.some(1))
 
         sc.h2("Update implementation")
-        c1.update_action(actionName="mint", actionEntry=sp.record(action=test_module.mint, only_admin=True)).run(sender=admin)
+        c1.updateAction(actionName="mint", actionEntry=sp.record(action=TestModule.mint, only_admin=True)).run(sender=admin)
+
+        # Set delegate whitelist
+        # TODO: try to delegate without access
+
+        sc.h2("Set delegate whitelist")
+        c1.execute(actionName="setDelegateWhitelist", data=sp.pack(sp.record(address=admin.address, status=True))).run(sender=admin)
+
+
+        # Permit
+        sc.h2("Permit")
+        nonce = 0
+        deadline = sp.timestamp(1571761676)
+        permit_message = sp.pack(sp.record(
+                    deadline=deadline, spender=bob.address, amount=10, nonce=nonce))
+
+        sig_from_alice = sp.make_signature(
+            secret_key=alice.secret_key,
+            message=permit_message,
+            message_format="Raw",
+        )
+        c1.execute(actionName="permit", data=sp.pack(sp.record(owner=alice.public_key, spender=bob.address, amount=10, signature=sig_from_alice, deadline=deadline))).run(sender=admin, now=sp.timestamp(1571761674))
+        c1.getAllowance((sp.record(owner=alice.address, spender=bob.address), target))
+        sc.verify_equal(view_allowance.data.last, sp.some(10))
+
+        sc.h2("Permit - wrong signer")
+        nonce = 0
+        deadline = sp.timestamp(1571761676)
+        permit_message = sp.pack(sp.record(
+                    deadline=deadline, spender=alice.address, amount=10, nonce=nonce))
+
+        sig_from_alice = sp.make_signature(
+            secret_key=alice.secret_key,
+            message=permit_message,
+            message_format="Raw",
+        )
+        c1.execute(actionName="permit", data=sp.pack(sp.record(owner=bob.public_key, spender=alice.address, amount=10, signature=sig_from_alice, deadline=deadline))).run(sender=admin, now=sp.timestamp(1571761674), valid=False)
+        c1.getAllowance((sp.record(owner=bob.address, spender=alice.address), target))
+        sc.verify_equal(view_allowance.data.last, sp.some(0))
+
+        # TODO: wrong nonce, deadline expired

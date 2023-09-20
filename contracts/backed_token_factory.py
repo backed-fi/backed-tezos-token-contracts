@@ -1,43 +1,42 @@
 import smartpy as sp
-from contracts.utils.admin import admin_module
-from contracts.backed_token import backed_token_module
-# from contracts.backed_token_proxy import backed_token_proxy_module
 
-from contracts.actions.mint import mint_module
-from contracts.actions.burn import burn_module
-from contracts.actions.approve import approve_module 
-from contracts.actions.transfer import transfer_module 
+from contracts.backed_token import BackedTokenModule
+
+from contracts.utils.ownable import OwnableModule
+from contracts.utils.pausable import PausableModule
 
 @sp.module
-def backed_token_factory_module():
+def BackedTokenFactoryModule():
+    ##
     # @dev
     #
     # Factory contract, used for creating new, upgradable tokens.
     # 
     # The contract contains one role:
-    #  - An administrator, which can deploy new tokens
+    #  - An owner, which can deploy new tokens
     #
-    class BackedFactory(admin_module.Admin):
+    class BackedFactory(OwnableModule.Ownable):
+        ##
+        # @param owner - sp.address      The address of the account that will be set as owner of the contract
+        # @param implementation - sp.big_map    Implementation of the actions in form of lambdas that take storage and return updated one, that can be invoked in newly deployed token
         #
-        # @param administrator The address of the account that will be set as owner of the contract
-        #
-        def __init__(self, implementation, administrator):
-            admin_module.Admin.__init__(self, administrator)
+        def __init__(self, implementation, owner):
+            OwnableModule.Ownable.__init__(self, owner)
             self.data.implementation = implementation
         
-        #
+        ##
         # @dev Deploy and configures new instance of BackedFi Token. Callable only by the factory owner
-        # Emits a { NewToken } event
         # 
-        # @param name          The name that the newly created token will have
-        # @param symbol        The symbol that the newly created token will have
-        # @param icon          The icon that the newly created token will have
-        # @param decimals      The number of decimals that the newly created token will have
-        # @param tokenOwner    The address of the account to which the owner role will be assigned
+        # @param name - sp.bytes          The name that the newly created token will have
+        # @param symbol - sp.bytes       The symbol that the newly created token will have
+        # @param icon - sp.bytes          The icon that the newly created token will have
+        # @param decimals -sp.bytes      The number of decimals that the newly created token will have
+        # @param tokenOwner - sp.address    The address of the account to which the owner role will be assigned
         #
+        # Emits a { NewToken } event
         @sp.entrypoint
-        def deploy_token(self, tokenOwner, metadata, name, symbol, icon, decimals):
-            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_Factory_NotAdmin"
+        def deploy_token(self, tokenOwner, minter, burner, pauser, metadata, name, symbol, icon, decimals):
+            assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
 
             token_metadata = {
                 "decimals": decimals,  # Mandatory by the spec
@@ -60,27 +59,38 @@ def backed_token_factory_module():
             )
             
             newToken = sp.create_contract(
-                backed_token_module.BackedToken,
+                BackedTokenModule.BackedToken,
                 None,
                 sp.mutez(0),
                 sp.record(
-                    administrator=tokenOwner,
+                    owner=tokenOwner,
+                    pauser=pauser,
                     paused=False,
                     storage=sp.record(
                         balances=balances,
                         metadata=metadata_storage,
                         total_supply=0,
                         token_metadata=token_metadata_storage,
+                        terms="https://www.backedassets.fi/legal-documentation",
+                        roles=sp.record(minter=minter, burner=burner)
                     ),
-                    registry=self.data.implementation
+                    implementation=self.data.implementation
                 )
             )
-            # sp.emit(sp.record(address=address, name=name, symbol=symbol), tag="NewToken")
+            sp.emit(sp.record(address=newToken, name=name, symbol=symbol), tag="NewToken")
 
+        ##
+        # @dev Update the implementation for future deployments. Callable only by the factory owner
+        # 
+        # @param implementation - sp.big_map    New implementation of the actions in form of lambdas that take storage and return updated one, that can be invoked in newly deployed token
+        #
+        # Emits a { NewImplementation } event
         @sp.entrypoint
-        def update_implementation(self, implementation):
-            assert self.is_administrator_(sp.sender), "BACKED_TOKEN_Factory_NotAdmin"
+        def updateImplementation(self, implementation):
+            assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
 
             self.data.implementation = implementation
+
+            sp.emit(sp.record(implementation=implementation), tag="NewImplementation")
 
             

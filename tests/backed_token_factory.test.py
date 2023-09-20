@@ -1,18 +1,23 @@
 import smartpy as sp
-from contracts.backed_token_factory import backed_token_factory_module
-from contracts.backed_token import backed_token_module
-from contracts.utils.admin import admin_module 
-from contracts.utils.pause import pause_module 
+from contracts.backed_token_factory import BackedTokenFactoryModule
+from contracts.backed_token import BackedTokenModule 
+from contracts.utils.ownable import OwnableModule 
+from contracts.utils.pausable import PausableModule 
 
-from contracts.actions.mint import mint_module
-from contracts.actions.burn import burn_module
-from contracts.actions.approve import approve_module
-from contracts.actions.transfer import transfer_module
+from contracts.actions.mint import MintModule 
+from contracts.actions.set_minter import SetMinterModule 
+from contracts.actions.burn import BurnModule 
+from contracts.actions.set_burner import SetBurnerModule 
+from contracts.actions.approve import ApproveModule
+from contracts.actions.transfer import TransferModule
+from contracts.actions.increase_allowance import IncreaseAllowanceModule
+from contracts.actions.decrease_allowance import DecreaseAllowanceModule
+from contracts.actions.set_terms import SetTermsModule
 
-from contracts.shared.storage import storage_module
+from contracts.shared.storage import StorageModule
 
 @sp.module
-def test_module():
+def TestModule():
     MintParams: type = sp.record(address=sp.address, value=sp.nat)
 
     class Viewer_nat(sp.Contract):
@@ -25,7 +30,7 @@ def test_module():
 
     @sp.effects()
     def mint(storage, data):
-        sp.cast(storage, storage_module.backed_token)
+        sp.cast(storage, StorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         mintParams = sp.unpack(data, MintParams).unwrap_some(error="BACKED_TOKEN_Mint_CannotUnpackParams")
         
@@ -44,16 +49,22 @@ if "templates" not in __name__:
     @sp.add_test(name="backed_token_factory")
     def test():
         sc = sp.test_scenario([
-            admin_module,
-            pause_module,
-            storage_module,
-            mint_module,
-            burn_module,
-            approve_module,
-            transfer_module,
-            backed_token_module,
-            backed_token_factory_module,
-            test_module])
+            OwnableModule,
+            PausableModule,
+            StorageModule,
+            MintModule,
+            SetMinterModule,
+            BurnModule,
+            SetBurnerModule,
+            ApproveModule,
+            TransferModule,
+            SetTermsModule,
+            IncreaseAllowanceModule,
+            DecreaseAllowanceModule,
+            BackedTokenModule,
+            BackedTokenFactoryModule,
+            TestModule
+        ])
         sc.h1("Backed Token Factory")
 
         # sp.test_account generates ED25519 key-pairs deterministically:
@@ -62,13 +73,18 @@ if "templates" not in __name__:
         bob = sp.test_account("Robert")
 
         implementation = sp.big_map({
-            "mint": sp.record(action=mint_module.mint, only_admin=True),
-            "burn": sp.record(action=burn_module.burn, only_admin=True),
-            "approve": sp.record(action=approve_module.approve, only_admin=False),
-            "transfer": sp.record(action=transfer_module.transfer, only_admin=False),
+            "mint": sp.record(action=MintModule.mint, only_admin=True),
+            "burn": sp.record(action=BurnModule.burn, only_admin=True),
+            "approve": sp.record(action=ApproveModule.approve, only_admin=False),
+            "transfer": sp.record(action=TransferModule.transfer, only_admin=False),
+            "setMinter": sp.record(action=SetMinterModule.setMinter, only_admin=True),
+            "setBurner": sp.record(action=SetBurnerModule.setBurner, only_admin=True),
+            "setTerms": sp.record(action=SetTermsModule.setTerms, only_admin=True),
+            "increaseAllowance": sp.record(action=IncreaseAllowanceModule.increaseAllowance, only_admin=False),
+            "decreaseAllowance": sp.record(action=DecreaseAllowanceModule.decreaseAllowance, only_admin=False),
         })
 
-        factory = backed_token_factory_module.BackedFactory(administrator=admin.address, implementation=implementation)
+        factory = BackedTokenFactoryModule.BackedFactory(owner=admin.address, implementation=implementation)
 
         sc+= factory
 
@@ -76,6 +92,9 @@ if "templates" not in __name__:
 
         factory.deploy_token(
             tokenOwner=admin.address,
+            minter=admin.address,
+            burner=admin.address,
+            pauser=admin.address,
             # TODO:
             # metadata=sp.utils.metadata_of_url(
             # "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
@@ -93,11 +112,16 @@ if "templates" not in __name__:
 
 
         updated_implementation = sp.big_map({
-            "mint": sp.record(action=test_module.mint, only_admin=True),
-            "burn": sp.record(action=burn_module.burn, only_admin=True),
-            "approve": sp.record(action=approve_module.approve, only_admin=False),
-            "transfer": sp.record(action=transfer_module.transfer, only_admin=False),
+            "mint": sp.record(action=TestModule.mint, only_admin=True),
+            "burn": sp.record(action=BurnModule.burn, only_admin=True),
+            "approve": sp.record(action=ApproveModule.approve, only_admin=False),
+            "transfer": sp.record(action=TransferModule.transfer, only_admin=False),
+            "setMinter": sp.record(action=SetMinterModule.setMinter, only_admin=True),
+            "setBurner": sp.record(action=SetBurnerModule.setBurner, only_admin=True),
+            "setTerms": sp.record(action=SetTermsModule.setTerms, only_admin=True),
+            "increaseAllowance": sp.record(action=IncreaseAllowanceModule.increaseAllowance, only_admin=False),
+            "decreaseAllowance": sp.record(action=DecreaseAllowanceModule.decreaseAllowance, only_admin=False),
         })
 
-        factory.update_implementation(updated_implementation).run(sender=admin)
+        factory.updateImplementation(updated_implementation).run(sender=admin)
         

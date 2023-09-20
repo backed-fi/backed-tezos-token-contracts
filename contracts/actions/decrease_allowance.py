@@ -2,8 +2,8 @@ import smartpy as sp
 from contracts.shared.storage import StorageModule
 
 @sp.module
-def ApproveModule():
-    ApproveParams: type = sp.record(spender=sp.address, value=sp.nat).layout(("spender", "value"))
+def DecreaseAllowanceModule():
+    DecreaseAllowanceParams: type = sp.record(spender=sp.address, value=sp.nat).layout(("spender", "value"))
 
     ##
     # @dev Sets a `value` amount of tokens as the allowance of `spender` over the
@@ -14,21 +14,20 @@ def ApproveModule():
     #
     # Emits an {Approval} event.
     @sp.effects()
-    def approve(storage, data):
+    def decreaseAllowance(storage, data):
         sp.cast(storage, StorageModule.BackedToken)
         sp.cast(data, sp.bytes)
-        approvalParams = sp.unpack(data, ApproveParams).unwrap_some(error="BACKED_TOKEN_Approve_CannotUnpackParams")
+        decreaseAllowanceParams = sp.unpack(data, DecreaseAllowanceParams).unwrap_some(error="BACKED_TOKEN_DecreaseAllowance_CannotUnpackParams")
       
         updated_storage = storage
 
         spender_balance = updated_storage.balances.get(
             sp.sender, default=sp.record(balance=0, approvals={})
         )
-        alreadyApproved = spender_balance.approvals.get(approvalParams.spender, default=0)
-        assert (
-            alreadyApproved == 0 or approvalParams.value == 0
-        ), "BACKED_TOKEN_Approve_UnsafeAllowanceChange"
-        spender_balance.approvals[approvalParams.spender] = approvalParams.value
+        spender_balance.approvals[decreaseAllowanceParams.spender] = sp.as_nat(
+            spender_balance.approvals[decreaseAllowanceParams.spender] - decreaseAllowanceParams.value,
+            error="BACKED_TOKEN_DecreaseAllowance_AllownaceCannotBeLessThanZero",
+        )
         updated_storage.balances[sp.sender] = spender_balance
 
         return updated_storage

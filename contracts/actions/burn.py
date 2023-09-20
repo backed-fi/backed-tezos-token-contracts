@@ -1,13 +1,22 @@
 import smartpy as sp
-from contracts.shared.storage import storage_module
+from contracts.shared.storage import StorageModule
 
 @sp.module
-def burn_module():
+def BurnModule():
     BurnParams: type = sp.record(address=sp.address, value=sp.nat)
 
+    ##
+    # @dev Function to burn tokens. Allowed only for burner. The burned tokens
+    # must be from the burner (msg.sender), or from the contract itself
+    #
+    # @param account   The account from which the tokens will be burned
+    # @param amount    The amount of tokens to be burned
+    #
     @sp.effects()
     def burn(storage, data):
-        sp.cast(storage, storage_module.backed_token)
+        assert sp.sender == storage.roles.burner, "BACKED_TOKEN_Burn_NotBurner"
+
+        sp.cast(storage, StorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         burnParams = sp.unpack(data, BurnParams).unwrap_some(error="BACKED_TOKEN_Burn_CannotUnpackParams")
 
