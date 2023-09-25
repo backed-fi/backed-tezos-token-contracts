@@ -72,7 +72,10 @@ def BackedTokenFactoryModule():
                         total_supply=0,
                         token_metadata=token_metadata_storage,
                         terms="https://www.backedassets.fi/legal-documentation",
-                        roles=sp.record(minter=minter, burner=burner)
+                        roles=sp.record(minter=minter, burner=burner),
+                        nonce=sp.big_map(),
+                        delegateMode=False,
+                        delegateWhitelist=sp.big_map()
                     ),
                     implementation=self.data.implementation
                 )

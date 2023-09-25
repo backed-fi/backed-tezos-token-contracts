@@ -1,5 +1,5 @@
 import smartpy as sp
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def DecreaseAllowanceModule():
@@ -15,7 +15,7 @@ def DecreaseAllowanceModule():
     # Emits an {Approval} event.
     @sp.effects()
     def decreaseAllowance(storage, data):
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         decreaseAllowanceParams = sp.unpack(data, DecreaseAllowanceParams).unwrap_some(error="BACKED_TOKEN_DecreaseAllowance_CannotUnpackParams")
       

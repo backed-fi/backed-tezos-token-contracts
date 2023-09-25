@@ -1,5 +1,5 @@
 import smartpy as sp
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def BurnModule():
@@ -16,7 +16,7 @@ def BurnModule():
     def burn(storage, data):
         assert sp.sender == storage.roles.burner, "BACKED_TOKEN_Burn_NotBurner"
 
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         burnParams = sp.unpack(data, BurnParams).unwrap_some(error="BACKED_TOKEN_Burn_CannotUnpackParams")
 

@@ -1,5 +1,5 @@
 import smartpy as sp
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def SetBurnerModule():
@@ -13,7 +13,7 @@ def SetBurnerModule():
     # Emits a { NewBurner } event
     @sp.effects()
     def setBurner(storage, data):
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         newBurner = sp.unpack(data, SetBurnerParams).unwrap_some(error="BACKED_TOKEN_SetBurner_CannotUnpackParams")
 

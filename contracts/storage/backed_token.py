@@ -1,7 +1,7 @@
 import smartpy as sp
 
 @sp.module
-def StorageModule():
+def BackedTokenStorageModule():
     BackedToken: type = sp.record(
         balances=sp.big_map[sp.address, sp.record(approvals=sp.map[sp.address, sp.nat], balance=sp.nat)],
         total_supply=sp.nat,

@@ -1,5 +1,5 @@
 import smartpy as sp
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def SetDelegateWhitelistModule():
@@ -15,7 +15,7 @@ def SetDelegateWhitelistModule():
     # Emits a { DelegateWhitelistChange } event
     @sp.effects()
     def setDelegateWhitelist(storage, data):
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         params = sp.unpack(data, SetDelegateWhitelistParams).unwrap_some(error="BACKED_TOKEN_SetDelegateMode_CannotUnpackParams")
 

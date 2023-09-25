@@ -1,5 +1,5 @@
 import smartpy as sp
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def SetDelegateModeModule():
@@ -13,7 +13,7 @@ def SetDelegateModeModule():
     # Emits a { DelegateModeChange } event
     @sp.effects()
     def setDelegateMode(storage, data):
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         newDelegateMode = sp.unpack(data, SetDelegateModeParams).unwrap_some(error="BACKED_TOKEN_SetDelegateMode_CannotUnpackParams")
 

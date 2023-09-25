@@ -5,7 +5,7 @@ import smartpy as sp
 from contracts.utils.ownable import OwnableModule
 from contracts.utils.pausable import PausableModule
 from contracts.utils.nonce import NonceModule
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 # The metadata below is just an example, it serves as a base,
 # the contents are used to build the metadata JSON that users
@@ -25,7 +25,7 @@ def BackedTokenModule():
             OwnableModule.OwnableInterface.__init__(self)
             PausableModule.PausableInterface.__init__(self)
             NonceModule.NonceInterface.__init__(self)
-            sp.cast(self.data.storage, StorageModule.BackedToken)
+            sp.cast(self.data.storage, BackedTokenStorageModule.BackedToken)
             self.data.storage.terms = "https://www.backedassets.fi/legal-documentation"
             self.data.storage.balances = sp.big_map()
             self.data.storage.total_supply = 0
@@ -52,7 +52,16 @@ def BackedTokenModule():
             contract_metadata spec: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md
             """
             CommonInterface.__init__(self, minter, burner)
-            sp.cast(implementation, sp.big_map[sp.string, sp.record(action=sp.lambda_[sp.record(storage=StorageModule.BackedToken, data=sp.bytes), StorageModule.BackedToken], only_admin=sp.bool)])
+            sp.cast(implementation, 
+                    sp.big_map[
+                        sp.string,
+                        sp.record(
+                            action=sp.lambda_[
+                                sp.record(storage=BackedTokenStorageModule.BackedToken, data=sp.bytes),
+                                BackedTokenStorageModule.BackedToken
+                            ],
+                            only_admin=sp.bool
+            )])
 
             self.data.implementation = implementation
             self.data.storage.metadata = metadata

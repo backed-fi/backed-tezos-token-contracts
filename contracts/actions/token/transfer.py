@@ -1,5 +1,5 @@
 import smartpy as sp
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def TransferModule():
@@ -15,7 +15,7 @@ def TransferModule():
     # Emits a {Transfer} event.
     @sp.effects()
     def transfer(storage, data):
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         transferParams = sp.unpack(data, TransferParams).unwrap_some(error="BACKED_TOKEN_Transfer_CannotUnpackParams")
       
