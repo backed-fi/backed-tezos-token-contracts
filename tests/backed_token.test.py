@@ -1,22 +1,22 @@
 import smartpy as sp
 from contracts.backed_token import BackedTokenModule 
 from contracts.utils.ownable import OwnableModule 
-from contracts.utils.pausable import PausableModule 
+from contracts.utils.pausable import PausableModule
 from contracts.utils.nonce import NonceModule
 
-from contracts.actions.mint import MintModule 
-from contracts.actions.set_minter import SetMinterModule 
-from contracts.actions.burn import BurnModule 
-from contracts.actions.set_burner import SetBurnerModule 
-from contracts.actions.approve import ApproveModule
-from contracts.actions.transfer import TransferModule
-from contracts.actions.delegated_transfer import DelegatedTransferModule
-from contracts.actions.permit import PermitModule
-from contracts.actions.increase_allowance import IncreaseAllowanceModule
-from contracts.actions.decrease_allowance import DecreaseAllowanceModule
-from contracts.actions.set_terms import SetTermsModule
-from contracts.actions.set_delegate_mode import SetDelegateModeModule
-from contracts.actions.set_delegate_whitelist import SetDelegateWhitelistModule
+from contracts.actions.token.mint import MintModule 
+from contracts.actions.token.set_minter import SetMinterModule 
+from contracts.actions.token.burn import BurnModule 
+from contracts.actions.token.set_burner import SetBurnerModule 
+from contracts.actions.token.approve import ApproveModule
+from contracts.actions.token.transfer import TransferModule
+from contracts.actions.token.delegated_transfer import DelegatedTransferModule
+from contracts.actions.token.permit import PermitModule
+from contracts.actions.token.increase_allowance import IncreaseAllowanceModule
+from contracts.actions.token.decrease_allowance import DecreaseAllowanceModule
+from contracts.actions.token.set_terms import SetTermsModule
+from contracts.actions.token.set_delegate_mode import SetDelegateModeModule
+from contracts.actions.token.set_delegate_whitelist import SetDelegateWhitelistModule
 from contracts.shared.storage import StorageModule
 
 @sp.module

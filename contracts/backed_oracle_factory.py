@@ -4,7 +4,6 @@ from contracts.backed_oracle import BackedOracleModule
 from contracts.backed_oracle_forwarder import BackedOracleForwarderModule
 
 from contracts.utils.ownable import OwnableModule
-from contracts.utils.pausable import PausableModule
 
 @sp.module
 def BackedOracleFactoryModule():
@@ -23,7 +22,6 @@ def BackedOracleFactoryModule():
         #
         def __init__(self, implementation, owner):
             OwnableModule.Ownable.__init__(self, owner)
-            # TODO: lambdas
             self.data.implementation = implementation
         
         ##
