@@ -1,7 +1,10 @@
 import smartpy as sp
 
 from contracts.backed_oracle import BackedOracleModule
+from contracts.storage.backed_oracle import BackedOracleStorageModule
 from contracts.utils.ownable import OwnableModule
+
+from contracts.actions.oracle.update_answer import UpdateAnswerModule
 
 @sp.module
 def TestModule():
@@ -18,6 +21,8 @@ if "templates" not in __name__:
     def test():
         sc = sp.test_scenario([
             OwnableModule,
+            BackedOracleStorageModule,
+            UpdateAnswerModule,
             BackedOracleModule,
             TestModule
         ])
@@ -31,7 +36,15 @@ if "templates" not in __name__:
         description = "Backed Oracle contract"
         error = "No data present"
 
-        oracle = BackedOracleModule.BackedOracle(owner=admin.address, updater=admin.address, decimals=decimals, description=description)
+        oracle = BackedOracleModule.BackedOracle(
+            owner=admin.address,
+            implementation=sp.big_map({
+                "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
+            }),
+            updater=admin.address,
+            decimals=decimals,
+            description=description
+        )
 
         sc += oracle
 
@@ -80,32 +93,32 @@ if "templates" not in __name__:
         first_round_timestamp = valid_timestamp
 
         sc.h2("Sender has not have an Updater role")
-        oracle.updateAnswer(sp.record(newAnswer=valid_answer, newTimestamp=valid_timestamp)).run(sender=alice, valid=False)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=valid_answer, newTimestamp=valid_timestamp))).run(sender=alice, valid=False)
         
         sc.h2("Timestamp in the future")
         timestamp = time.add_seconds(60)
-        oracle.updateAnswer(sp.record(newAnswer=valid_answer, newTimestamp=timestamp)).run(sender=admin, valid=False, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=valid_answer, newTimestamp=timestamp))).run(sender=admin, valid=False, now=time)
         
         sc.h2("Timestamp too old")
         timestamp = sp.timestamp(time_in_secs - 301)
-        oracle.updateAnswer(sp.record(newAnswer=valid_answer, newTimestamp=timestamp)).run(sender=admin, valid=False, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=valid_answer, newTimestamp=timestamp))).run(sender=admin, valid=False, now=time)
         
         sc.h2("Too frequent update")
-        oracle.updateAnswer(sp.record(newAnswer=valid_answer, newTimestamp=valid_timestamp)).run(sender=admin, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=valid_answer, newTimestamp=valid_timestamp))).run(sender=admin, now=time)
 
         timestamp = sp.timestamp(time_in_secs - 50)
-        oracle.updateAnswer(sp.record(newAnswer=valid_answer, newTimestamp=timestamp)).run(sender=admin, valid=False, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=valid_answer, newTimestamp=timestamp))).run(sender=admin, valid=False, now=time)
 
         sc.h2("Answer is older than last updated")
         timestamp = sp.timestamp(time_in_secs - 150)
-        oracle.updateAnswer(sp.record(newAnswer=valid_answer, newTimestamp=timestamp)).run(sender=admin, valid=False, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=valid_answer, newTimestamp=timestamp))).run(sender=admin, valid=False, now=time)
 
         sc.h2("Answer difference is past allowed deviation")
         new_answer = valid_answer + (valid_answer * 20 / 100)
         
         time = time.add_seconds(3601)
         valid_timestamp = valid_timestamp.add_seconds(3601)
-        oracle.updateAnswer(sp.record(newAnswer=new_answer, newTimestamp=valid_timestamp)).run(sender=admin, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=new_answer, newTimestamp=valid_timestamp))).run(sender=admin, now=time)
 
         sc.verify(sc.compute(oracle.latestAnswer(), source=alice) == valid_answer + (valid_answer * 10 / 100))
 
@@ -113,7 +126,7 @@ if "templates" not in __name__:
 
         time = time.add_seconds(3601)
         valid_timestamp = valid_timestamp.add_seconds(3601)
-        oracle.updateAnswer(sp.record(newAnswer=valid_answer, newTimestamp=valid_timestamp)).run(sender=admin, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=valid_answer, newTimestamp=valid_timestamp))).run(sender=admin, now=time)
 
         # Test with decreased answer
 
@@ -121,7 +134,7 @@ if "templates" not in __name__:
         
         time = time.add_seconds(3601)
         valid_timestamp = valid_timestamp.add_seconds(3601)
-        oracle.updateAnswer(sp.record(newAnswer=new_answer, newTimestamp=valid_timestamp)).run(sender=admin, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=new_answer, newTimestamp=valid_timestamp))).run(sender=admin, now=time)
 
         sc.verify(sc.compute(oracle.latestAnswer(), source=alice) == valid_answer - (valid_answer * 10 / 100))
 

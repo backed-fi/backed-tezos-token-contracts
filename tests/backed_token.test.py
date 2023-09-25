@@ -17,7 +17,7 @@ from contracts.actions.token.decrease_allowance import DecreaseAllowanceModule
 from contracts.actions.token.set_terms import SetTermsModule
 from contracts.actions.token.set_delegate_mode import SetDelegateModeModule
 from contracts.actions.token.set_delegate_whitelist import SetDelegateWhitelistModule
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def TestModule():
@@ -41,7 +41,7 @@ def TestModule():
 
     @sp.effects()
     def mint(storage, data):
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         mintParams = sp.unpack(data, MintParams).unwrap_some(error="BACKED_TOKEN_Mint_CannotUnpackParams")
         
@@ -63,7 +63,7 @@ if "templates" not in __name__:
             OwnableModule,
             PausableModule,
             NonceModule,
-            StorageModule,
+            BackedTokenStorageModule,
             MintModule,
             SetMinterModule,
             BurnModule,

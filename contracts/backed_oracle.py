@@ -1,9 +1,8 @@
 import smartpy as sp
 
-from contracts.backed_token import BackedTokenModule
+from contracts.storage.backed_oracle import BackedOracleStorageModule
 
 from contracts.utils.ownable import OwnableModule
-from contracts.utils.pausable import PausableModule
 
 @sp.module
 def BackedOracleModule():
@@ -16,24 +15,37 @@ def BackedOracleModule():
     #  - An owner, which can deploy new tokens
     #
     class BackedOracle(OwnableModule.Ownable):
-        def __init__(self, owner, updater, decimals, description):
+        def __init__(self, owner, implementation, updater, decimals, description):
             OwnableModule.Ownable.__init__(self, owner)
 
-            self.data.updater = updater
-            self.data.decimals = decimals
-            self.data.description = description
+            self.data.storage.updater = updater
+            self.data.storage.decimals = decimals
+            self.data.storage.description = description
+
+            sp.cast(self.data.storage, BackedOracleStorageModule.BackedOracle)
 
             self.data.storage.latestRoundNumber = 0
-            sp.cast(self.data.storage.roundData, sp.big_map[sp.nat, sp.record(answer=sp.int, timestamp=sp.timestamp)])
             self.data.storage.roundData = sp.big_map()
+
+            sp.cast(implementation, sp.big_map[
+                sp.string,
+                sp.record(
+                    action=sp.lambda_[
+                        sp.record(storage=BackedOracleStorageModule.BackedOracle, data=sp.bytes),
+                        BackedOracleStorageModule.BackedOracle
+                    ],
+                    only_admin=sp.bool
+            )])
+
+            self.data.implementation = implementation
 
         @sp.onchain_view()
         def decimals(self):
-            return self.data.decimals
+            return self.data.storage.decimals
 
         @sp.onchain_view()
         def description(self):
-            return self.data.description
+            return self.data.storage.description
 
         @sp.onchain_view()
         def latestAnswer(self):
@@ -84,31 +96,16 @@ def BackedOracleModule():
             )
 
         @sp.entrypoint
-        def updateAnswer(self, params):
-            assert sp.sender == self.data.updater, "BACKED_ORACLE_NotUpdater"
+        def execute(self, params):
+            sp.cast(params, sp.record(actionName=sp.string, data=sp.bytes))
 
-            sp.cast(params, sp.record(newAnswer=sp.int, newTimestamp=sp.timestamp))
-            latestRoundData = self.data.storage.roundData.get(self.data.storage.latestRoundNumber, default=sp.record(answer=0, timestamp=sp.timestamp(0)))    
+            actionEntry = self.data.implementation.get(params.actionName, error="BACKED_ORACLE_UnknownAction")
 
-            assert params.newTimestamp < sp.now, "Timestamp cannot be in the future"
-            # TODO: constants?
-            assert sp.now - params.newTimestamp < 300, "Timestamp is too old"
-            assert params.newTimestamp > latestRoundData.timestamp, "Timestamp is older than the last update"
-            assert params.newTimestamp - latestRoundData.timestamp > 3600, "Timestamp cannot be updated too often"
+            if actionEntry.only_admin:
+                assert self.isOwner(sp.sender), "BACKED_ORACLE_NotAdmin"
 
-            newAnswer = params.newAnswer
+            updated_storage = self.data.implementation[params.actionName].action(sp.record(storage=self.data.storage, data=params.data))
 
-            if latestRoundData.answer > 0:
-                allowedDeviation = latestRoundData.answer * 10 / 100
-                if params.newAnswer > latestRoundData.answer + allowedDeviation:
-                    newAnswer = latestRoundData.answer + allowedDeviation
-                if params.newAnswer < latestRoundData.answer - allowedDeviation:
-                    newAnswer = latestRoundData.answer - allowedDeviation
-                
+            self.data.storage = updated_storage
 
-            self.data.storage.latestRoundNumber += 1
-
-            self.data.storage.roundData[self.data.storage.latestRoundNumber] = sp.record(answer=newAnswer, timestamp=params.newTimestamp)
             
-            sp.emit(sp.record(answer=newAnswer, timestamp=params.newTimestamp), tag="AnswerUpdated")
-            sp.emit(sp.record(roundId=self.data.storage.latestRoundNumber, sender=sp.sender), tag="NewRound")

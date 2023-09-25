@@ -35,7 +35,7 @@ def BackedOracleFactoryModule():
         # Emits a { NewOracle } event
         # Emits a { NewForwarder } event
         @sp.entrypoint
-        def deploy_oracle(self, owner, updater, decimals, description):
+        def deployOracle(self, owner, updater, decimals, description):
             sp.cast(decimals, sp.string)
             sp.cast(description, sp.string)
             assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
@@ -46,13 +46,14 @@ def BackedOracleFactoryModule():
                 sp.mutez(0),
                 sp.record(
                     owner=owner,
-                    updater=updater,
-                    decimals=decimals,
-                    description=description,
                     storage=sp.record(
                         latestRoundNumber=0,
-                        roundData=sp.big_map()
+                        roundData=sp.big_map(),
+                        updater=updater,
+                        decimals=decimals,
+                        description=description,
                     ),
+                    implementation=self.data.implementation
                 )
             )
             sp.emit(sp.record(address=newOracle), tag="NewOracle")

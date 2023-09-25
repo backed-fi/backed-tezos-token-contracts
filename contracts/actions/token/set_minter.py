@@ -1,5 +1,5 @@
 import smartpy as sp
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def SetMinterModule():
@@ -13,7 +13,7 @@ def SetMinterModule():
     # Emits a { NewMinter } event
     @sp.effects()
     def setMinter(storage, data):
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         newMinter = sp.unpack(data, SetMinterParams).unwrap_some(error="BACKED_TOKEN_SetMinter_CannotUnpackParams")
 

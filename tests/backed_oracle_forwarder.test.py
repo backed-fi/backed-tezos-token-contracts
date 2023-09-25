@@ -2,7 +2,11 @@ import smartpy as sp
 
 from contracts.backed_oracle import BackedOracleModule
 from contracts.backed_oracle_forwarder import BackedOracleForwarderModule
+
+from contracts.storage.backed_oracle import BackedOracleStorageModule
 from contracts.utils.ownable import OwnableModule
+
+from contracts.actions.oracle.update_answer import UpdateAnswerModule
 
 @sp.module
 def TestModule():
@@ -19,6 +23,8 @@ if "templates" not in __name__:
     def test():
         sc = sp.test_scenario([
             OwnableModule,
+            BackedOracleStorageModule,
+            UpdateAnswerModule,
             BackedOracleModule,
             BackedOracleForwarderModule,
             TestModule
@@ -35,7 +41,15 @@ if "templates" not in __name__:
         description = "Backed Oracle contract"
         error = "No data present"
 
-        oracle = BackedOracleModule.BackedOracle(owner=admin.address, updater=admin.address, decimals=decimals, description=description)
+        oracle = BackedOracleModule.BackedOracle(
+            owner=admin.address,
+            implementation=sp.big_map({
+                "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
+            }),
+            updater=admin.address,
+            decimals=decimals,
+            description=description
+        )
 
         sc += oracle
 
@@ -86,7 +100,7 @@ if "templates" not in __name__:
         first_round_answer = valid_answer
         first_round_timestamp = valid_timestamp
 
-        oracle.updateAnswer(sp.record(newAnswer=valid_answer, newTimestamp=valid_timestamp)).run(sender=admin, now=time)
+        oracle.execute(actionName="updateAnswer", data=sp.pack(sp.record(newAnswer=valid_answer, newTimestamp=valid_timestamp))).run(sender=admin, now=time)
 
         sc.h1("Views - data available")
         # Reset to initial value
@@ -134,7 +148,15 @@ if "templates" not in __name__:
         ))
 
         sc.h1("Set upstream oracle")
-        new_oracle = BackedOracleModule.BackedOracle(owner=admin.address, updater=admin.address, decimals=decimals, description=description)
+        new_oracle = BackedOracleModule.BackedOracle(
+            owner=admin.address,
+            implementation=sp.big_map({
+                "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
+            }),
+            updater=admin.address,
+            decimals=decimals,
+            description=description
+        )
 
         sc += new_oracle
 

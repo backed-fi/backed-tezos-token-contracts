@@ -1,5 +1,5 @@
 import smartpy as sp
-from contracts.shared.storage import StorageModule
+from contracts.storage.backed_token import BackedTokenStorageModule
 
 @sp.module
 def ApproveModule():
@@ -15,7 +15,7 @@ def ApproveModule():
     # Emits an {Approval} event.
     @sp.effects()
     def approve(storage, data):
-        sp.cast(storage, StorageModule.BackedToken)
+        sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         approvalParams = sp.unpack(data, ApproveParams).unwrap_some(error="BACKED_TOKEN_Approve_CannotUnpackParams")
       
