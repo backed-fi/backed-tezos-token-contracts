@@ -1,0 +1,31 @@
+{
+  "name": "backed-tezos-token-contracts",
+  "version": "1.0.0",
+  "description": "# Install smartpy",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/backed-fi/backed-tezos-token-contracts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/backed-fi/backed-tezos-token-contracts/issues"
+  },
+  "homepage": "https://github.com/backed-fi/backed-tezos-token-contracts#readme",
+  "dependencies": {
+    "@taquito/signer": "^17.3.1",
+    "@taquito/taquito": "^17.3.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}

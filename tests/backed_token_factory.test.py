@@ -87,15 +87,15 @@ if "templates" not in __name__:
             "burn": sp.record(action=BurnModule.burn, only_admin=False),
             "approve": sp.record(action=ApproveModule.approve, only_admin=False),
             "transfer": sp.record(action=TransferModule.transfer, only_admin=False),
-            "delegatedTransfer": sp.record(action=DelegatedTransferModule.delegatedTransfer, only_admin=False),
-            "permit": sp.record(action=PermitModule.permit, only_admin=False),
+            # "delegatedTransfer": sp.record(action=DelegatedTransferModule.delegatedTransfer, only_admin=False),
+            # "permit": sp.record(action=PermitModule.permit, only_admin=False),
             "setMinter": sp.record(action=SetMinterModule.setMinter, only_admin=True),
             "setBurner": sp.record(action=SetBurnerModule.setBurner, only_admin=True),
             "setTerms": sp.record(action=SetTermsModule.setTerms, only_admin=True),
             "increaseAllowance": sp.record(action=IncreaseAllowanceModule.increaseAllowance, only_admin=False),
             "decreaseAllowance": sp.record(action=DecreaseAllowanceModule.decreaseAllowance, only_admin=False),
-            "setDelegateMode": sp.record(action=SetDelegateModeModule.setDelegateMode, only_admin=True),
-            "setDelegateWhitelist": sp.record(action=SetDelegateWhitelistModule.setDelegateWhitelist, only_admin=True),
+            # "setDelegateMode": sp.record(action=SetDelegateModeModule.setDelegateMode, only_admin=True),
+            # "setDelegateWhitelist": sp.record(action=SetDelegateWhitelistModule.setDelegateWhitelist, only_admin=True),
         })
 
         factory = BackedTokenFactoryModule.BackedFactory(owner=admin.address, implementation=implementation)
