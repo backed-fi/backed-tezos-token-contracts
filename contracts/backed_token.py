@@ -52,18 +52,7 @@ def BackedTokenModule():
             contract_metadata spec: https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md
             """
             CommonInterface.__init__(self, minter, burner)
-            sp.cast(implementation, 
-                    sp.big_map[
-                        sp.string,
-                        sp.record(
-                            action=sp.lambda_[
-                                sp.record(storage=BackedTokenStorageModule.BackedToken, data=sp.bytes),
-                                BackedTokenStorageModule.BackedToken
-                            ],
-                            only_admin=sp.bool
-            )])
-
-            self.data.implementation = implementation
+         
             self.data.storage.metadata = metadata
             self.data.storage.token_metadata = sp.big_map(
                 {0: sp.record(token_id=0, token_info=token_metadata)}
@@ -73,38 +62,7 @@ def BackedTokenModule():
                 self.data.storage.balances[owner.key] = owner.value
                 self.data.storage.total_supply += owner.value.balance
 
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        # @param metadata - sp.address      The address of the account that will be set as owner of the contract
-        # @param ledger - sp.address      The address of the account that will be set as owner of the contract
-        # @param token_metadata - sp.address      The address of the account that will be set as owner of the contract
-        # @param implementation - sp.address      The address of the account that will be set as owner of the contract
-        # @param minter - sp.address      The address of the account that will be set as owner of the contract
-        # @param burner - sp.address      The address of the account that will be set as owner of the contract
-        # @param pauser - sp.address      The address of the account that will be set as owner of the contract
-        #
-        @sp.private(with_storage='read-write')
-        def invoke(self, params):
-            sp.cast(params, sp.record(actionName=sp.string, data=sp.bytes))
-
-            updated_storage = self.data.implementation[params.actionName].action(sp.record(storage=self.data.storage, data=params.data))
-
-            self.data.storage = updated_storage
-
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        # @param metadata - sp.address      The address of the account that will be set as owner of the contract
-        #
-        @sp.entrypoint
-        def execute(self, actionName, data):
-            assert not self.isPaused(), "BACKED_TOKEN_Paused"
-
-            actionEntry = self.data.implementation.get(actionName, error="BACKED_TOKEN_UnknownAction")
-
-            if actionEntry.only_admin:
-                assert self.isOwner(sp.sender), "BACKED_TOKEN_NotAdmin"
-
-            self.invoke(sp.record(actionName=actionName, data=data))
+      
   
         # TODO:
         # @param owner - sp.address      The address of the account that will be set as owner of the contract
