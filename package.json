@@ -7,7 +7,14 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "backed_token_factory:test": "./smartpy test tests/backed_token_factory.test.py output",
+    "backed_token_factory:deploy": "npx ts-node scripts/backed_token_factory/deploy_factory.ts",
+    "backed_token:test": "./smartpy test tests/backed_token.test.py output",
+    "backed_token:deploy": "npx ts-node scripts/backed_token_factory/deploy_token.ts",
+    "backed_oracle_factory:test": "./smartpy test tests/backed_oracle_factory.test.py output",
+    "backed_oracle_factory:deploy": "npx ts-node scripts/backed_oracle_factory/deploy_oracle_factory.ts",
+    "backed_oracle:test": "./smartpy test tests/backed_oracle.test.py output",
+    "backed_oracle:deploy": "npx ts-node scripts/backed_oracle_factory/deploy_oracle.ts"
   },
   "repository": {
     "type": "git",
