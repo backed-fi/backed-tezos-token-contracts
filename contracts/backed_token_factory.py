@@ -35,7 +35,7 @@ def BackedTokenFactoryModule():
         #
         # Emits a { NewToken } event
         @sp.entrypoint
-        def deploy_token(self, tokenOwner, minter, burner, pauser, metadata, name, symbol, icon, decimals):
+        def deployToken(self, tokenOwner, minter, burner, pauser, metadata, name, symbol, icon, decimals):
             assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
 
             token_metadata = {

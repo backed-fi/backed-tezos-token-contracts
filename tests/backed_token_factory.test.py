@@ -104,7 +104,7 @@ if "templates" not in __name__:
 
         sc.h1("Attempt to deploy token")
 
-        factory.deploy_token(
+        factory.deployToken(
             tokenOwner=admin.address,
             minter=admin.address,
             burner=admin.address,

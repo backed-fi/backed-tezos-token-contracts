@@ -7,10 +7,9 @@ const main = async () => {
     const tezosDeployer = new TezosDeployer();
     await tezosDeployer.init()
 
-
     await tezosDeployer.deploy(sourceCode, storage)
 };
 
 main().then(() => {
-    console.log("🌱 Script successfully executed");
+    console.log("🌱 Backed Token Factory sucessfully deployed");
 });

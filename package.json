@@ -21,7 +21,8 @@
   "homepage": "https://github.com/backed-fi/backed-tezos-token-contracts#readme",
   "dependencies": {
     "@taquito/signer": "^17.3.1",
-    "@taquito/taquito": "^17.3.1"
+    "@taquito/taquito": "^17.3.1",
+    "@taquito/utils": "^17.3.1"
   },
   "devDependencies": {
     "dotenv": "^16.3.1",
