@@ -73,14 +73,10 @@ def BackedOracleFactoryModule():
         # @dev Update the implementation for future deployments. Callable only by the factory owner
         # 
         # @param implementation - sp.big_map    New implementation of the actions in form of lambdas that take storage and return updated one, that can be invoked in newly deployed oracles
-        #
-        # Emits a { NewImplementation } event
         @sp.entrypoint
         def updateImplementation(self, implementation):
             assert self.isOwner(sp.sender), "BACKED_ORACLE_FACTORY_NotOwner"
 
             self.data.implementation = implementation
-
-            sp.emit(sp.record(implementation=implementation), tag="NewImplementation")
 
             

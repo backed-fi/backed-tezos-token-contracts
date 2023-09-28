@@ -1,0 +1,41 @@
+{
+  "name": "backed-tezos-token-contracts",
+  "version": "1.0.0",
+  "description": "# Install smartpy",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "backed_token_factory:test": "./smartpy test tests/backed_token_factory.test.py output",
+    "backed_token_factory:originate": "./smartpy test originations/backed_token_factory/backed_token_factory.origination.py originations/backed_token_factory/output",
+    "backed_token_factory:deploy": "npx ts-node scripts/backed_token_factory/deploy_factory.ts",
+    "backed_token:test": "./smartpy test tests/backed_token.test.py output",
+    "backed_token:deploy": "npx ts-node scripts/backed_token_factory/deploy_token.ts",
+    "backed_oracle_factory:test": "./smartpy test tests/backed_oracle_factory.test.py output",
+    "backed_oracle_factory:originate": "./smartpy test originations/backed_oracle_factory/backed_oracle_factory.origination.py originations/backed_oracle_factory/output",
+    "backed_oracle_factory:deploy": "npx ts-node scripts/backed_oracle_factory/deploy_oracle_factory.ts",
+    "backed_oracle:test": "./smartpy test tests/backed_oracle.test.py output",
+    "backed_oracle:deploy": "npx ts-node scripts/backed_oracle_factory/deploy_oracle.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/backed-fi/backed-tezos-token-contracts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/backed-fi/backed-tezos-token-contracts/issues"
+  },
+  "homepage": "https://github.com/backed-fi/backed-tezos-token-contracts#readme",
+  "dependencies": {
+    "@taquito/signer": "^17.3.1",
+    "@taquito/taquito": "^17.3.1",
+    "@taquito/utils": "^17.3.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}

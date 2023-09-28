@@ -1,0 +1,2357 @@
+[
+    {
+      "prim": "storage",
+      "args": [
+        {
+          "prim": "pair",
+          "args": [
+            {
+              "prim": "big_map",
+              "args": [
+                { "prim": "string" },
+                {
+                  "prim": "pair",
+                  "args": [
+                    {
+                      "prim": "lambda",
+                      "args": [
+                        {
+                          "prim": "pair",
+                          "args": [
+                            { "prim": "bytes", "annots": [ "%data" ] },
+                            {
+                              "prim": "pair",
+                              "args": [
+                                { "prim": "string", "annots": [ "%decimals" ] },
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    { "prim": "string", "annots": [ "%description" ] },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        { "prim": "nat", "annots": [ "%latestRoundNumber" ] },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            {
+                                              "prim": "big_map",
+                                              "args": [
+                                                { "prim": "nat" },
+                                                { "prim": "pair", "args": [ { "prim": "int", "annots": [ "%answer" ] }, { "prim": "timestamp", "annots": [ "%timestamp" ] } ] }
+                                              ],
+                                              "annots": [ "%roundData" ]
+                                            },
+                                            { "prim": "address", "annots": [ "%updater" ] }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "annots": [ "%storage" ]
+                            }
+                          ]
+                        },
+                        {
+                          "prim": "pair",
+                          "args": [
+                            { "prim": "string", "annots": [ "%decimals" ] },
+                            {
+                              "prim": "pair",
+                              "args": [
+                                { "prim": "string", "annots": [ "%description" ] },
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    { "prim": "nat", "annots": [ "%latestRoundNumber" ] },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        {
+                                          "prim": "big_map",
+                                          "args": [
+                                            { "prim": "nat" },
+                                            { "prim": "pair", "args": [ { "prim": "int", "annots": [ "%answer" ] }, { "prim": "timestamp", "annots": [ "%timestamp" ] } ] }
+                                          ],
+                                          "annots": [ "%roundData" ]
+                                        },
+                                        { "prim": "address", "annots": [ "%updater" ] }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "annots": [ "%action" ]
+                    },
+                    { "prim": "bool", "annots": [ "%only_admin" ] }
+                  ]
+                }
+              ],
+              "annots": [ "%implementation" ]
+            },
+            { "prim": "address", "annots": [ "%owner" ] }
+          ]
+        }
+      ]
+    },
+    {
+      "prim": "parameter",
+      "args": [
+        {
+          "prim": "or",
+          "args": [
+            {
+              "prim": "or",
+              "args": [
+                {
+                  "prim": "pair",
+                  "args": [
+                    { "prim": "string", "annots": [ "%decimals" ] },
+                    {
+                      "prim": "pair",
+                      "args": [
+                        { "prim": "string", "annots": [ "%description" ] },
+                        { "prim": "pair", "args": [ { "prim": "address", "annots": [ "%owner" ] }, { "prim": "address", "annots": [ "%updater" ] } ] }
+                      ]
+                    }
+                  ],
+                  "annots": [ "%deployOracle" ]
+                },
+                { "prim": "pair", "args": [ { "prim": "unit" }, { "prim": "contract", "args": [ { "prim": "address" } ] } ], "annots": [ "%getOwner" ] }
+              ]
+            },
+            {
+              "prim": "or",
+              "args": [
+                { "prim": "unit", "annots": [ "%renounceOwnership" ] },
+                {
+                  "prim": "or",
+                  "args": [
+                    { "prim": "address", "annots": [ "%transferOwnership" ] },
+                    {
+                      "prim": "big_map",
+                      "args": [
+                        { "prim": "string" },
+                        {
+                          "prim": "pair",
+                          "args": [
+                            {
+                              "prim": "lambda",
+                              "args": [
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    { "prim": "bytes", "annots": [ "%data" ] },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        { "prim": "string", "annots": [ "%decimals" ] },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            { "prim": "string", "annots": [ "%description" ] },
+                                            {
+                                              "prim": "pair",
+                                              "args": [
+                                                { "prim": "nat", "annots": [ "%latestRoundNumber" ] },
+                                                {
+                                                  "prim": "pair",
+                                                  "args": [
+                                                    {
+                                                      "prim": "big_map",
+                                                      "args": [
+                                                        { "prim": "nat" },
+                                                        {
+                                                          "prim": "pair",
+                                                          "args": [ { "prim": "int", "annots": [ "%answer" ] }, { "prim": "timestamp", "annots": [ "%timestamp" ] } ]
+                                                        }
+                                                      ],
+                                                      "annots": [ "%roundData" ]
+                                                    },
+                                                    { "prim": "address", "annots": [ "%updater" ] }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ],
+                                      "annots": [ "%storage" ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    { "prim": "string", "annots": [ "%decimals" ] },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        { "prim": "string", "annots": [ "%description" ] },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            { "prim": "nat", "annots": [ "%latestRoundNumber" ] },
+                                            {
+                                              "prim": "pair",
+                                              "args": [
+                                                {
+                                                  "prim": "big_map",
+                                                  "args": [
+                                                    { "prim": "nat" },
+                                                    { "prim": "pair", "args": [ { "prim": "int", "annots": [ "%answer" ] }, { "prim": "timestamp", "annots": [ "%timestamp" ] } ] }
+                                                  ],
+                                                  "annots": [ "%roundData" ]
+                                                },
+                                                { "prim": "address", "annots": [ "%updater" ] }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "annots": [ "%action" ]
+                            },
+                            { "prim": "bool", "annots": [ "%only_admin" ] }
+                          ]
+                        }
+                      ],
+                      "annots": [ "%updateImplementation" ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "prim": "code",
+      "args": [
+        [
+          {
+            "prim": "LAMBDA",
+            "args": [
+              {
+                "prim": "pair",
+                "args": [
+                  { "prim": "address" },
+                  {
+                    "prim": "pair",
+                    "args": [
+                      { "prim": "list", "args": [ { "prim": "operation" } ] },
+                      {
+                        "prim": "pair",
+                        "args": [
+                          {
+                            "prim": "big_map",
+                            "args": [
+                              { "prim": "string" },
+                              {
+                                "prim": "pair",
+                                "args": [
+                                  {
+                                    "prim": "lambda",
+                                    "args": [
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "bytes" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "string" },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "string" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      { "prim": "nat" },
+                                                      {
+                                                        "prim": "pair",
+                                                        "args": [
+                                                          {
+                                                            "prim": "big_map",
+                                                            "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                          },
+                                                          { "prim": "address" }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "string" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "string" },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "nat" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      {
+                                                        "prim": "big_map",
+                                                        "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                      },
+                                                      { "prim": "address" }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  { "prim": "bool" }
+                                ]
+                              }
+                            ]
+                          },
+                          { "prim": "address" }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "prim": "pair",
+                "args": [
+                  { "prim": "unit" },
+                  {
+                    "prim": "pair",
+                    "args": [
+                      { "prim": "list", "args": [ { "prim": "operation" } ] },
+                      {
+                        "prim": "pair",
+                        "args": [
+                          {
+                            "prim": "big_map",
+                            "args": [
+                              { "prim": "string" },
+                              {
+                                "prim": "pair",
+                                "args": [
+                                  {
+                                    "prim": "lambda",
+                                    "args": [
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "bytes" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "string" },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "string" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      { "prim": "nat" },
+                                                      {
+                                                        "prim": "pair",
+                                                        "args": [
+                                                          {
+                                                            "prim": "big_map",
+                                                            "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                          },
+                                                          { "prim": "address" }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "string" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "string" },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "nat" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      {
+                                                        "prim": "big_map",
+                                                        "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                      },
+                                                      { "prim": "address" }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  { "prim": "bool" }
+                                ]
+                              }
+                            ]
+                          },
+                          { "prim": "address" }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              [
+                { "prim": "UNPAIR", "args": [ { "int": "3" } ] },
+                { "prim": "SWAP" },
+                { "prim": "DUG", "args": [ { "int": "2" } ] },
+                { "prim": "UPDATE", "args": [ { "int": "2" } ] },
+                { "prim": "SWAP" },
+                { "prim": "DUP", "args": [ { "int": "2" } ] },
+                { "prim": "CDR" },
+                { "prim": "EMIT", "args": [ { "prim": "address" } ], "annots": [ "%OwnershipTransferred" ] },
+                { "prim": "CONS" },
+                { "prim": "UNIT" },
+                { "prim": "PAIR", "args": [ { "int": "3" } ] }
+              ]
+            ]
+          },
+          { "prim": "SWAP" },
+          {
+            "prim": "LAMBDA",
+            "args": [
+              {
+                "prim": "pair",
+                "args": [
+                  { "prim": "address" },
+                  {
+                    "prim": "pair",
+                    "args": [
+                      {
+                        "prim": "big_map",
+                        "args": [
+                          { "prim": "string" },
+                          {
+                            "prim": "pair",
+                            "args": [
+                              {
+                                "prim": "lambda",
+                                "args": [
+                                  {
+                                    "prim": "pair",
+                                    "args": [
+                                      { "prim": "bytes" },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "string" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "string" },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "nat" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      {
+                                                        "prim": "big_map",
+                                                        "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                      },
+                                                      { "prim": "address" }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "prim": "pair",
+                                    "args": [
+                                      { "prim": "string" },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "string" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "nat" },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "big_map", "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ] },
+                                                  { "prim": "address" }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              { "prim": "bool" }
+                            ]
+                          }
+                        ]
+                      },
+                      { "prim": "address" }
+                    ]
+                  }
+                ]
+              },
+              {
+                "prim": "pair",
+                "args": [
+                  { "prim": "bool" },
+                  {
+                    "prim": "pair",
+                    "args": [
+                      {
+                        "prim": "big_map",
+                        "args": [
+                          { "prim": "string" },
+                          {
+                            "prim": "pair",
+                            "args": [
+                              {
+                                "prim": "lambda",
+                                "args": [
+                                  {
+                                    "prim": "pair",
+                                    "args": [
+                                      { "prim": "bytes" },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "string" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "string" },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "nat" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      {
+                                                        "prim": "big_map",
+                                                        "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                      },
+                                                      { "prim": "address" }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "prim": "pair",
+                                    "args": [
+                                      { "prim": "string" },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "string" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "nat" },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "big_map", "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ] },
+                                                  { "prim": "address" }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              { "prim": "bool" }
+                            ]
+                          }
+                        ]
+                      },
+                      { "prim": "address" }
+                    ]
+                  }
+                ]
+              },
+              [ { "prim": "UNPAIR" }, { "prim": "DUP", "args": [ { "int": "2" } ] }, { "prim": "CDR" }, { "prim": "COMPARE" }, { "prim": "EQ" }, { "prim": "PAIR" } ]
+            ]
+          },
+          { "prim": "SWAP" },
+          { "prim": "UNPAIR" },
+          {
+            "prim": "IF_LEFT",
+            "args": [
+              [
+                {
+                  "prim": "IF_LEFT",
+                  "args": [
+                    [
+                      { "prim": "DUP", "args": [ { "int": "3" } ] },
+                      { "prim": "SENDER" },
+                      { "prim": "SWAP" },
+                      { "prim": "DIG", "args": [ { "int": "3" } ] },
+                      { "prim": "DIG", "args": [ { "int": "2" } ] },
+                      { "prim": "PAIR" },
+                      { "prim": "EXEC" },
+                      { "prim": "UNPAIR" },
+                      { "prim": "DIG", "args": [ { "int": "4" } ] },
+                      { "prim": "DIG", "args": [ { "int": "4" } ] },
+                      { "prim": "DIG", "args": [ { "int": "3" } ] },
+                      { "prim": "DIG", "args": [ { "int": "4" } ] },
+                      { "prim": "DIG", "args": [ { "int": "4" } ] },
+                      {
+                        "prim": "IF",
+                        "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "BACKED_TOKEN_Factory_NotOwner" } ] }, { "prim": "FAILWITH" } ] ]
+                      },
+                      { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                      { "prim": "DUP", "args": [ { "int": "2" } ] },
+                      { "prim": "GET", "args": [ { "int": "6" } ] },
+                      { "prim": "EMPTY_BIG_MAP", "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ] },
+                      { "prim": "PUSH", "args": [ { "prim": "nat" }, { "int": "0" } ] },
+                      { "prim": "DUP", "args": [ { "int": "5" } ] },
+                      { "prim": "GET", "args": [ { "int": "3" } ] },
+                      { "prim": "DUP", "args": [ { "int": "6" } ] },
+                      { "prim": "CAR" },
+                      { "prim": "PAIR", "args": [ { "int": "5" } ] },
+                      { "prim": "DIG", "args": [ { "int": "4" } ] },
+                      { "prim": "DROP" },
+                      { "prim": "DIG", "args": [ { "int": "4" } ] },
+                      { "prim": "DROP" },
+                      { "prim": "DUP", "args": [ { "int": "3" } ] },
+                      { "prim": "GET", "args": [ { "int": "5" } ] },
+                      { "prim": "DUP", "args": [ { "int": "5" } ] },
+                      { "prim": "CAR" },
+                      { "prim": "PAIR", "args": [ { "int": "3" } ] },
+                      { "prim": "PUSH", "args": [ { "prim": "mutez" }, { "int": "0" } ] },
+                      { "prim": "NONE", "args": [ { "prim": "key_hash" } ] },
+                      {
+                        "prim": "CREATE_CONTRACT",
+                        "args": [
+                          [
+                            {
+                              "prim": "parameter",
+                              "args": [
+                                {
+                                  "prim": "or",
+                                  "args": [
+                                    {
+                                      "prim": "or",
+                                      "args": [
+                                        {
+                                          "prim": "pair",
+                                          "args": [ { "prim": "string", "annots": [ "%actionName" ] }, { "prim": "bytes", "annots": [ "%data" ] } ],
+                                          "annots": [ "%execute" ]
+                                        },
+                                        { "prim": "pair", "args": [ { "prim": "unit" }, { "prim": "contract", "args": [ { "prim": "address" } ] } ], "annots": [ "%getOwner" ] }
+                                      ]
+                                    },
+                                    { "prim": "or", "args": [ { "prim": "unit", "annots": [ "%renounceOwnership" ] }, { "prim": "address", "annots": [ "%transferOwnership" ] } ] }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "prim": "storage",
+                              "args": [
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    {
+                                      "prim": "big_map",
+                                      "args": [
+                                        { "prim": "string" },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            {
+                                              "prim": "lambda",
+                                              "args": [
+                                                {
+                                                  "prim": "pair",
+                                                  "args": [
+                                                    { "prim": "bytes", "annots": [ "%data" ] },
+                                                    {
+                                                      "prim": "pair",
+                                                      "args": [
+                                                        { "prim": "string", "annots": [ "%decimals" ] },
+                                                        {
+                                                          "prim": "pair",
+                                                          "args": [
+                                                            { "prim": "string", "annots": [ "%description" ] },
+                                                            {
+                                                              "prim": "pair",
+                                                              "args": [
+                                                                { "prim": "nat", "annots": [ "%latestRoundNumber" ] },
+                                                                {
+                                                                  "prim": "pair",
+                                                                  "args": [
+                                                                    {
+                                                                      "prim": "big_map",
+                                                                      "args": [
+                                                                        { "prim": "nat" },
+                                                                        {
+                                                                          "prim": "pair",
+                                                                          "args": [ { "prim": "int", "annots": [ "%answer" ] }, { "prim": "timestamp", "annots": [ "%timestamp" ] } ]
+                                                                        }
+                                                                      ],
+                                                                      "annots": [ "%roundData" ]
+                                                                    },
+                                                                    { "prim": "address", "annots": [ "%updater" ] }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ],
+                                                      "annots": [ "%storage" ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "prim": "pair",
+                                                  "args": [
+                                                    { "prim": "string", "annots": [ "%decimals" ] },
+                                                    {
+                                                      "prim": "pair",
+                                                      "args": [
+                                                        { "prim": "string", "annots": [ "%description" ] },
+                                                        {
+                                                          "prim": "pair",
+                                                          "args": [
+                                                            { "prim": "nat", "annots": [ "%latestRoundNumber" ] },
+                                                            {
+                                                              "prim": "pair",
+                                                              "args": [
+                                                                {
+                                                                  "prim": "big_map",
+                                                                  "args": [
+                                                                    { "prim": "nat" },
+                                                                    {
+                                                                      "prim": "pair",
+                                                                      "args": [ { "prim": "int", "annots": [ "%answer" ] }, { "prim": "timestamp", "annots": [ "%timestamp" ] } ]
+                                                                    }
+                                                                  ],
+                                                                  "annots": [ "%roundData" ]
+                                                                },
+                                                                { "prim": "address", "annots": [ "%updater" ] }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ],
+                                              "annots": [ "%action" ]
+                                            },
+                                            { "prim": "bool", "annots": [ "%only_admin" ] }
+                                          ]
+                                        }
+                                      ],
+                                      "annots": [ "%implementation" ]
+                                    },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        { "prim": "address", "annots": [ "%owner" ] },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            { "prim": "string", "annots": [ "%decimals" ] },
+                                            {
+                                              "prim": "pair",
+                                              "args": [
+                                                { "prim": "string", "annots": [ "%description" ] },
+                                                {
+                                                  "prim": "pair",
+                                                  "args": [
+                                                    { "prim": "nat", "annots": [ "%latestRoundNumber" ] },
+                                                    {
+                                                      "prim": "pair",
+                                                      "args": [
+                                                        {
+                                                          "prim": "big_map",
+                                                          "args": [
+                                                            { "prim": "nat" },
+                                                            {
+                                                              "prim": "pair",
+                                                              "args": [ { "prim": "int", "annots": [ "%answer" ] }, { "prim": "timestamp", "annots": [ "%timestamp" ] } ]
+                                                            }
+                                                          ],
+                                                          "annots": [ "%roundData" ]
+                                                        },
+                                                        { "prim": "address", "annots": [ "%updater" ] }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ],
+                                          "annots": [ "%storage" ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "prim": "code",
+                              "args": [
+                                [
+                                  {
+                                    "prim": "LAMBDA",
+                                    "args": [
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "address" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "list", "args": [ { "prim": "operation" } ] },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  {
+                                                    "prim": "big_map",
+                                                    "args": [
+                                                      { "prim": "string" },
+                                                      {
+                                                        "prim": "pair",
+                                                        "args": [
+                                                          {
+                                                            "prim": "lambda",
+                                                            "args": [
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "bytes" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      { "prim": "string" },
+                                                                      {
+                                                                        "prim": "pair",
+                                                                        "args": [
+                                                                          { "prim": "string" },
+                                                                          {
+                                                                            "prim": "pair",
+                                                                            "args": [
+                                                                              { "prim": "nat" },
+                                                                              {
+                                                                                "prim": "pair",
+                                                                                "args": [
+                                                                                  {
+                                                                                    "prim": "big_map",
+                                                                                    "args": [
+                                                                                      { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] }
+                                                                                    ]
+                                                                                  },
+                                                                                  { "prim": "address" }
+                                                                                ]
+                                                                              }
+                                                                            ]
+                                                                          }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "string" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      { "prim": "string" },
+                                                                      {
+                                                                        "prim": "pair",
+                                                                        "args": [
+                                                                          { "prim": "nat" },
+                                                                          {
+                                                                            "prim": "pair",
+                                                                            "args": [
+                                                                              {
+                                                                                "prim": "big_map",
+                                                                                "args": [
+                                                                                  { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] }
+                                                                                ]
+                                                                              },
+                                                                              { "prim": "address" }
+                                                                            ]
+                                                                          }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          },
+                                                          { "prim": "bool" }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      { "prim": "address" },
+                                                      {
+                                                        "prim": "pair",
+                                                        "args": [
+                                                          { "prim": "string" },
+                                                          {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                              { "prim": "string" },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "nat" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      {
+                                                                        "prim": "big_map",
+                                                                        "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                                      },
+                                                                      { "prim": "address" }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "unit" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "list", "args": [ { "prim": "operation" } ] },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  {
+                                                    "prim": "big_map",
+                                                    "args": [
+                                                      { "prim": "string" },
+                                                      {
+                                                        "prim": "pair",
+                                                        "args": [
+                                                          {
+                                                            "prim": "lambda",
+                                                            "args": [
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "bytes" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      { "prim": "string" },
+                                                                      {
+                                                                        "prim": "pair",
+                                                                        "args": [
+                                                                          { "prim": "string" },
+                                                                          {
+                                                                            "prim": "pair",
+                                                                            "args": [
+                                                                              { "prim": "nat" },
+                                                                              {
+                                                                                "prim": "pair",
+                                                                                "args": [
+                                                                                  {
+                                                                                    "prim": "big_map",
+                                                                                    "args": [
+                                                                                      { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] }
+                                                                                    ]
+                                                                                  },
+                                                                                  { "prim": "address" }
+                                                                                ]
+                                                                              }
+                                                                            ]
+                                                                          }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "string" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      { "prim": "string" },
+                                                                      {
+                                                                        "prim": "pair",
+                                                                        "args": [
+                                                                          { "prim": "nat" },
+                                                                          {
+                                                                            "prim": "pair",
+                                                                            "args": [
+                                                                              {
+                                                                                "prim": "big_map",
+                                                                                "args": [
+                                                                                  { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] }
+                                                                                ]
+                                                                              },
+                                                                              { "prim": "address" }
+                                                                            ]
+                                                                          }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          },
+                                                          { "prim": "bool" }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      { "prim": "address" },
+                                                      {
+                                                        "prim": "pair",
+                                                        "args": [
+                                                          { "prim": "string" },
+                                                          {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                              { "prim": "string" },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "nat" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      {
+                                                                        "prim": "big_map",
+                                                                        "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                                      },
+                                                                      { "prim": "address" }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      [
+                                        { "prim": "UNPAIR", "args": [ { "int": "3" } ] },
+                                        { "prim": "SWAP" },
+                                        { "prim": "DUG", "args": [ { "int": "2" } ] },
+                                        { "prim": "UPDATE", "args": [ { "int": "3" } ] },
+                                        { "prim": "SWAP" },
+                                        { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                        { "prim": "GET", "args": [ { "int": "3" } ] },
+                                        { "prim": "EMIT", "args": [ { "prim": "address" } ], "annots": [ "%OwnershipTransferred" ] },
+                                        { "prim": "CONS" },
+                                        { "prim": "UNIT" },
+                                        { "prim": "PAIR", "args": [ { "int": "3" } ] }
+                                      ]
+                                    ]
+                                  },
+                                  { "prim": "SWAP" },
+                                  {
+                                    "prim": "LAMBDA",
+                                    "args": [
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "address" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              {
+                                                "prim": "big_map",
+                                                "args": [
+                                                  { "prim": "string" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      {
+                                                        "prim": "lambda",
+                                                        "args": [
+                                                          {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                              { "prim": "bytes" },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "string" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      { "prim": "string" },
+                                                                      {
+                                                                        "prim": "pair",
+                                                                        "args": [
+                                                                          { "prim": "nat" },
+                                                                          {
+                                                                            "prim": "pair",
+                                                                            "args": [
+                                                                              {
+                                                                                "prim": "big_map",
+                                                                                "args": [
+                                                                                  { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] }
+                                                                                ]
+                                                                              },
+                                                                              { "prim": "address" }
+                                                                            ]
+                                                                          }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                              { "prim": "string" },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "string" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      { "prim": "nat" },
+                                                                      {
+                                                                        "prim": "pair",
+                                                                        "args": [
+                                                                          {
+                                                                            "prim": "big_map",
+                                                                            "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                                          },
+                                                                          { "prim": "address" }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      },
+                                                      { "prim": "bool" }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "address" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      { "prim": "string" },
+                                                      {
+                                                        "prim": "pair",
+                                                        "args": [
+                                                          { "prim": "string" },
+                                                          {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                              { "prim": "nat" },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  {
+                                                                    "prim": "big_map",
+                                                                    "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                                  },
+                                                                  { "prim": "address" }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "bool" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              {
+                                                "prim": "big_map",
+                                                "args": [
+                                                  { "prim": "string" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      {
+                                                        "prim": "lambda",
+                                                        "args": [
+                                                          {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                              { "prim": "bytes" },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "string" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      { "prim": "string" },
+                                                                      {
+                                                                        "prim": "pair",
+                                                                        "args": [
+                                                                          { "prim": "nat" },
+                                                                          {
+                                                                            "prim": "pair",
+                                                                            "args": [
+                                                                              {
+                                                                                "prim": "big_map",
+                                                                                "args": [
+                                                                                  { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] }
+                                                                                ]
+                                                                              },
+                                                                              { "prim": "address" }
+                                                                            ]
+                                                                          }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                              { "prim": "string" },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  { "prim": "string" },
+                                                                  {
+                                                                    "prim": "pair",
+                                                                    "args": [
+                                                                      { "prim": "nat" },
+                                                                      {
+                                                                        "prim": "pair",
+                                                                        "args": [
+                                                                          {
+                                                                            "prim": "big_map",
+                                                                            "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                                          },
+                                                                          { "prim": "address" }
+                                                                        ]
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      },
+                                                      { "prim": "bool" }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "address" },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [
+                                                      { "prim": "string" },
+                                                      {
+                                                        "prim": "pair",
+                                                        "args": [
+                                                          { "prim": "string" },
+                                                          {
+                                                            "prim": "pair",
+                                                            "args": [
+                                                              { "prim": "nat" },
+                                                              {
+                                                                "prim": "pair",
+                                                                "args": [
+                                                                  {
+                                                                    "prim": "big_map",
+                                                                    "args": [ { "prim": "nat" }, { "prim": "pair", "args": [ { "prim": "int" }, { "prim": "timestamp" } ] } ]
+                                                                  },
+                                                                  { "prim": "address" }
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      [
+                                        { "prim": "UNPAIR" },
+                                        { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                        { "prim": "GET", "args": [ { "int": "3" } ] },
+                                        { "prim": "COMPARE" },
+                                        { "prim": "EQ" },
+                                        { "prim": "PAIR" }
+                                      ]
+                                    ]
+                                  },
+                                  { "prim": "SWAP" },
+                                  { "prim": "UNPAIR" },
+                                  {
+                                    "prim": "IF_LEFT",
+                                    "args": [
+                                      [
+                                        {
+                                          "prim": "IF_LEFT",
+                                          "args": [
+                                            [
+                                              { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                              { "prim": "CAR" },
+                                              { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                              { "prim": "CAR" },
+                                              { "prim": "GET" },
+                                              {
+                                                "prim": "IF_NONE",
+                                                "args": [
+                                                  [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "BACKED_ORACLE_UnknownAction" } ] }, { "prim": "FAILWITH" } ], []
+                                                ]
+                                              },
+                                              { "prim": "CDR" },
+                                              {
+                                                "prim": "IF",
+                                                "args": [
+                                                  [
+                                                    { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                                    { "prim": "DROP" },
+                                                    { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                                    { "prim": "SENDER" },
+                                                    { "prim": "SWAP" },
+                                                    { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                                    { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                                    { "prim": "PAIR" },
+                                                    { "prim": "EXEC" },
+                                                    { "prim": "UNPAIR" },
+                                                    { "prim": "SWAP" },
+                                                    { "prim": "DUG", "args": [ { "int": "2" } ] },
+                                                    {
+                                                      "prim": "IF",
+                                                      "args": [
+                                                        [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "BACKED_ORACLE_NotAdmin" } ] }, { "prim": "FAILWITH" } ]
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                                    { "prim": "DROP" },
+                                                    { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                                    { "prim": "DROP" }
+                                                  ]
+                                                ]
+                                              },
+                                              { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                              { "prim": "CAR" },
+                                              { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                              { "prim": "CAR" },
+                                              { "prim": "GET" },
+                                              { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "107" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                              { "prim": "CAR" },
+                                              { "prim": "DUP", "args": [ { "int": "3" } ] },
+                                              { "prim": "GET", "args": [ { "int": "4" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "CDR" },
+                                              { "prim": "PAIR" },
+                                              { "prim": "EXEC" },
+                                              { "prim": "UPDATE", "args": [ { "int": "4" } ] },
+                                              { "prim": "NIL", "args": [ { "prim": "operation" } ] }
+                                            ],
+                                            [
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "DROP" },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "DROP" },
+                                              { "prim": "CDR" },
+                                              { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                                              { "prim": "SWAP" },
+                                              { "prim": "PUSH", "args": [ { "prim": "mutez" }, { "int": "0" } ] },
+                                              { "prim": "DUP", "args": [ { "int": "4" } ] },
+                                              { "prim": "GET", "args": [ { "int": "3" } ] },
+                                              { "prim": "TRANSFER_TOKENS" },
+                                              { "prim": "CONS" }
+                                            ]
+                                          ]
+                                        }
+                                      ],
+                                      [
+                                        {
+                                          "prim": "IF_LEFT",
+                                          "args": [
+                                            [
+                                              { "prim": "DROP" },
+                                              { "prim": "SENDER" },
+                                              { "prim": "PAIR" },
+                                              { "prim": "EXEC" },
+                                              { "prim": "UNPAIR" },
+                                              {
+                                                "prim": "IF",
+                                                "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Ownable_NotOwner" } ] }, { "prim": "FAILWITH" } ] ]
+                                              },
+                                              { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "PUSH", "args": [ { "prim": "address" }, { "string": "tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU" } ] },
+                                              { "prim": "SWAP" },
+                                              { "prim": "DUG", "args": [ { "int": "3" } ] },
+                                              { "prim": "PAIR", "args": [ { "int": "3" } ] },
+                                              { "prim": "EXEC" },
+                                              { "prim": "CDR" },
+                                              { "prim": "UNPAIR" }
+                                            ],
+                                            [
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "SENDER" },
+                                              { "prim": "SWAP" },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "PAIR" },
+                                              { "prim": "EXEC" },
+                                              { "prim": "UNPAIR" },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              {
+                                                "prim": "IF",
+                                                "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Ownable_NotOwner" } ] }, { "prim": "FAILWITH" } ] ]
+                                              },
+                                              { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "SWAP" },
+                                              { "prim": "DUG", "args": [ { "int": "3" } ] },
+                                              { "prim": "PAIR", "args": [ { "int": "3" } ] },
+                                              { "prim": "EXEC" },
+                                              { "prim": "CDR" },
+                                              { "prim": "UNPAIR" }
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    ]
+                                  },
+                                  { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                                  { "prim": "SWAP" },
+                                  { "prim": "ITER", "args": [ [ { "prim": "CONS" } ] ] },
+                                  { "prim": "PAIR" }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [ { "string": "decimals" }, { "prim": "unit" }, { "prim": "string" }, [ { "prim": "CDR" }, { "prim": "GET", "args": [ { "int": "5" } ] } ] ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [ { "string": "description" }, { "prim": "unit" }, { "prim": "string" }, [ { "prim": "CDR" }, { "prim": "GET", "args": [ { "int": "7" } ] } ] ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "latestAnswer" },
+                                { "prim": "unit" },
+                                { "prim": "int" },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "PUSH", "args": [ { "prim": "nat" }, { "int": "0" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "COMPARE" },
+                                  { "prim": "NEQ" },
+                                  { "prim": "IF", "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "No data present" } ] }, { "prim": "FAILWITH" } ] ] },
+                                  { "prim": "DUP" },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "SWAP" },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "54" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CAR" }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "latestTimestamp" },
+                                { "prim": "unit" },
+                                { "prim": "timestamp" },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "PUSH", "args": [ { "prim": "nat" }, { "int": "0" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "COMPARE" },
+                                  { "prim": "NEQ" },
+                                  { "prim": "IF", "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "No data present" } ] }, { "prim": "FAILWITH" } ] ] },
+                                  { "prim": "DUP" },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "SWAP" },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "60" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CDR" }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "latestRound" },
+                                { "prim": "unit" },
+                                { "prim": "nat" },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "PUSH", "args": [ { "prim": "nat" }, { "int": "0" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "COMPARE" },
+                                  { "prim": "NEQ" },
+                                  { "prim": "IF", "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "No data present" } ] }, { "prim": "FAILWITH" } ] ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "latestRoundData" },
+                                { "prim": "unit" },
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    { "prim": "int", "annots": [ "%answer" ] },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        { "prim": "nat", "annots": [ "%answeredInRound" ] },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            { "prim": "nat", "annots": [ "%roundId" ] },
+                                            { "prim": "pair", "args": [ { "prim": "timestamp", "annots": [ "%startedAt" ] }, { "prim": "timestamp", "annots": [ "%updatedAt" ] } ] }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                [
+                                  { "prim": "UNPAIR" },
+                                  { "prim": "PUSH", "args": [ { "prim": "nat" }, { "int": "0" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "3" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "COMPARE" },
+                                  { "prim": "NEQ" },
+                                  { "prim": "IF", "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "No data present" } ] }, { "prim": "FAILWITH" } ] ] },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "3" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "76" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CDR" },
+                                  { "prim": "DUP", "args": [ { "int": "3" } ] },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "4" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "75" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CDR" },
+                                  { "prim": "DUP", "args": [ { "int": "4" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "5" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "6" } ] },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "7" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "74" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CAR" },
+                                  { "prim": "PAIR", "args": [ { "int": "5" } ] },
+                                  { "prim": "SWAP" },
+                                  { "prim": "DROP" },
+                                  { "prim": "SWAP" },
+                                  { "prim": "DROP" }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "getAnswer" },
+                                { "prim": "nat" },
+                                { "prim": "int" },
+                                [
+                                  { "prim": "UNPAIR" },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "COMPARE" },
+                                  { "prim": "LE" },
+                                  { "prim": "IF", "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "No data present" } ] }, { "prim": "FAILWITH" } ] ] },
+                                  { "prim": "SWAP" },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "SWAP" },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "84" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CAR" }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "getRoundData" },
+                                { "prim": "nat" },
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    { "prim": "int", "annots": [ "%answer" ] },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        { "prim": "nat", "annots": [ "%answeredInRound" ] },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            { "prim": "nat", "annots": [ "%roundId" ] },
+                                            { "prim": "pair", "args": [ { "prim": "timestamp", "annots": [ "%startedAt" ] }, { "prim": "timestamp", "annots": [ "%updatedAt" ] } ] }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                [
+                                  { "prim": "UNPAIR" },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "GET", "args": [ { "int": "9" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "COMPARE" },
+                                  { "prim": "LE" },
+                                  { "prim": "IF", "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "No data present" } ] }, { "prim": "FAILWITH" } ] ] },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "94" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CDR" },
+                                  { "prim": "DUP", "args": [ { "int": "3" } ] },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "3" } ] },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "93" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CDR" },
+                                  { "prim": "DUP", "args": [ { "int": "3" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "4" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "6" } ] },
+                                  { "prim": "GET", "args": [ { "int": "11" } ] },
+                                  { "prim": "DUP", "args": [ { "int": "6" } ] },
+                                  { "prim": "GET" },
+                                  { "prim": "IF_NONE", "args": [ [ { "prim": "PUSH", "args": [ { "prim": "int" }, { "int": "92" } ] }, { "prim": "FAILWITH" } ], [] ] },
+                                  { "prim": "CAR" },
+                                  { "prim": "PAIR", "args": [ { "int": "5" } ] },
+                                  { "prim": "SWAP" },
+                                  { "prim": "DROP" },
+                                  { "prim": "SWAP" },
+                                  { "prim": "DROP" }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [ { "string": "get_owner" }, { "prim": "unit" }, { "prim": "address" }, [ { "prim": "CDR" }, { "prim": "GET", "args": [ { "int": "3" } ] } ] ]
+                            }
+                          ]
+                        ]
+                      },
+                      { "prim": "DIG", "args": [ { "int": "2" } ] },
+                      { "prim": "SWAP" },
+                      { "prim": "CONS" },
+                      { "prim": "DUP", "args": [ { "int": "2" } ] },
+                      { "prim": "EMIT", "args": [ { "prim": "address" } ], "annots": [ "%NewOracle" ] },
+                      { "prim": "CONS" },
+                      { "prim": "SWAP" },
+                      { "prim": "DIG", "args": [ { "int": "2" } ] },
+                      { "prim": "GET", "args": [ { "int": "5" } ] },
+                      { "prim": "PAIR" },
+                      { "prim": "PUSH", "args": [ { "prim": "mutez" }, { "int": "0" } ] },
+                      { "prim": "NONE", "args": [ { "prim": "key_hash" } ] },
+                      {
+                        "prim": "CREATE_CONTRACT",
+                        "args": [
+                          [
+                            {
+                              "prim": "parameter",
+                              "args": [
+                                {
+                                  "prim": "or",
+                                  "args": [
+                                    {
+                                      "prim": "or",
+                                      "args": [
+                                        { "prim": "pair", "args": [ { "prim": "unit" }, { "prim": "contract", "args": [ { "prim": "address" } ] } ], "annots": [ "%getOwner" ] },
+                                        { "prim": "unit", "annots": [ "%renounceOwnership" ] }
+                                      ]
+                                    },
+                                    {
+                                      "prim": "or",
+                                      "args": [ { "prim": "address", "annots": [ "%setUpstreamOracle" ] }, { "prim": "address", "annots": [ "%transferOwnership" ] } ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "prim": "storage",
+                              "args": [ { "prim": "pair", "args": [ { "prim": "address", "annots": [ "%owner" ] }, { "prim": "address", "annots": [ "%upstreamOracle" ] } ] } ]
+                            },
+                            {
+                              "prim": "code",
+                              "args": [
+                                [
+                                  {
+                                    "prim": "LAMBDA",
+                                    "args": [
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "address" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "list", "args": [ { "prim": "operation" } ] }, { "prim": "pair", "args": [ { "prim": "address" }, { "prim": "address" } ] }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "unit" },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "list", "args": [ { "prim": "operation" } ] }, { "prim": "pair", "args": [ { "prim": "address" }, { "prim": "address" } ] }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      [
+                                        { "prim": "UNPAIR", "args": [ { "int": "3" } ] },
+                                        { "prim": "SWAP" },
+                                        { "prim": "DUG", "args": [ { "int": "2" } ] },
+                                        { "prim": "UPDATE", "args": [ { "int": "1" } ] },
+                                        { "prim": "SWAP" },
+                                        { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                        { "prim": "CAR" },
+                                        { "prim": "EMIT", "args": [ { "prim": "address" } ], "annots": [ "%OwnershipTransferred" ] },
+                                        { "prim": "CONS" },
+                                        { "prim": "UNIT" },
+                                        { "prim": "PAIR", "args": [ { "int": "3" } ] }
+                                      ]
+                                    ]
+                                  },
+                                  { "prim": "SWAP" },
+                                  {
+                                    "prim": "LAMBDA",
+                                    "args": [
+                                      { "prim": "pair", "args": [ { "prim": "address" }, { "prim": "pair", "args": [ { "prim": "address" }, { "prim": "address" } ] } ] },
+                                      { "prim": "pair", "args": [ { "prim": "bool" }, { "prim": "pair", "args": [ { "prim": "address" }, { "prim": "address" } ] } ] },
+                                      [
+                                        { "prim": "UNPAIR" },
+                                        { "prim": "DUP", "args": [ { "int": "2" } ] },
+                                        { "prim": "CAR" },
+                                        { "prim": "COMPARE" },
+                                        { "prim": "EQ" },
+                                        { "prim": "PAIR" }
+                                      ]
+                                    ]
+                                  },
+                                  { "prim": "SWAP" },
+                                  { "prim": "UNPAIR" },
+                                  {
+                                    "prim": "IF_LEFT",
+                                    "args": [
+                                      [
+                                        {
+                                          "prim": "IF_LEFT",
+                                          "args": [
+                                            [
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "DROP" },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "DROP" },
+                                              { "prim": "CDR" },
+                                              { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                                              { "prim": "SWAP" },
+                                              { "prim": "PUSH", "args": [ { "prim": "mutez" }, { "int": "0" } ] },
+                                              { "prim": "DUP", "args": [ { "int": "4" } ] },
+                                              { "prim": "CAR" },
+                                              { "prim": "TRANSFER_TOKENS" },
+                                              { "prim": "CONS" }
+                                            ],
+                                            [
+                                              { "prim": "DROP" },
+                                              { "prim": "SENDER" },
+                                              { "prim": "PAIR" },
+                                              { "prim": "EXEC" },
+                                              { "prim": "UNPAIR" },
+                                              {
+                                                "prim": "IF",
+                                                "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Ownable_NotOwner" } ] }, { "prim": "FAILWITH" } ] ]
+                                              },
+                                              { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "PUSH", "args": [ { "prim": "address" }, { "string": "tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU" } ] },
+                                              { "prim": "SWAP" },
+                                              { "prim": "DUG", "args": [ { "int": "3" } ] },
+                                              { "prim": "PAIR", "args": [ { "int": "3" } ] },
+                                              { "prim": "EXEC" },
+                                              { "prim": "CDR" },
+                                              { "prim": "UNPAIR" }
+                                            ]
+                                          ]
+                                        }
+                                      ],
+                                      [
+                                        {
+                                          "prim": "IF_LEFT",
+                                          "args": [
+                                            [
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DROP" },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "SENDER" },
+                                              { "prim": "SWAP" },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "PAIR" },
+                                              { "prim": "EXEC" },
+                                              { "prim": "UNPAIR" },
+                                              { "prim": "SWAP" },
+                                              { "prim": "DUG", "args": [ { "int": "2" } ] },
+                                              {
+                                                "prim": "IF",
+                                                "args": [
+                                                  [],
+                                                  [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "BACKED_ORACLE_FORWARDER_NotOwner" } ] }, { "prim": "FAILWITH" } ]
+                                                ]
+                                              },
+                                              { "prim": "UPDATE", "args": [ { "int": "2" } ] },
+                                              { "prim": "NIL", "args": [ { "prim": "operation" } ] }
+                                            ],
+                                            [
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "SENDER" },
+                                              { "prim": "SWAP" },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "PAIR" },
+                                              { "prim": "EXEC" },
+                                              { "prim": "UNPAIR" },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              {
+                                                "prim": "IF",
+                                                "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Ownable_NotOwner" } ] }, { "prim": "FAILWITH" } ] ]
+                                              },
+                                              { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "3" } ] },
+                                              { "prim": "DIG", "args": [ { "int": "2" } ] },
+                                              { "prim": "SWAP" },
+                                              { "prim": "DUG", "args": [ { "int": "3" } ] },
+                                              { "prim": "PAIR", "args": [ { "int": "3" } ] },
+                                              { "prim": "EXEC" },
+                                              { "prim": "CDR" },
+                                              { "prim": "UNPAIR" }
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    ]
+                                  },
+                                  { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                                  { "prim": "SWAP" },
+                                  { "prim": "ITER", "args": [ [ { "prim": "CONS" } ] ] },
+                                  { "prim": "PAIR" }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "decimals" },
+                                { "prim": "unit" },
+                                { "prim": "string" },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "CDR" },
+                                  { "prim": "UNIT" },
+                                  { "prim": "VIEW", "args": [ { "string": "decimals" }, { "prim": "string" } ] },
+                                  {
+                                    "prim": "IF_NONE",
+                                    "args": [ [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Invalid view" } ] }, { "prim": "FAILWITH" } ], [] ]
+                                  }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "description" },
+                                { "prim": "unit" },
+                                { "prim": "string" },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "CDR" },
+                                  { "prim": "UNIT" },
+                                  { "prim": "VIEW", "args": [ { "string": "description" }, { "prim": "string" } ] },
+                                  {
+                                    "prim": "IF_NONE",
+                                    "args": [ [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Invalid view" } ] }, { "prim": "FAILWITH" } ], [] ]
+                                  }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "latestAnswer" },
+                                { "prim": "unit" },
+                                { "prim": "int" },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "CDR" },
+                                  { "prim": "UNIT" },
+                                  { "prim": "VIEW", "args": [ { "string": "latestAnswer" }, { "prim": "int" } ] },
+                                  {
+                                    "prim": "IF_NONE",
+                                    "args": [ [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Invalid view" } ] }, { "prim": "FAILWITH" } ], [] ]
+                                  }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "latestTimestamp" },
+                                { "prim": "unit" },
+                                { "prim": "timestamp" },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "CDR" },
+                                  { "prim": "UNIT" },
+                                  { "prim": "VIEW", "args": [ { "string": "latestTimestamp" }, { "prim": "timestamp" } ] },
+                                  {
+                                    "prim": "IF_NONE",
+                                    "args": [ [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Invalid view" } ] }, { "prim": "FAILWITH" } ], [] ]
+                                  }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "latestRound" },
+                                { "prim": "unit" },
+                                { "prim": "nat" },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "CDR" },
+                                  { "prim": "UNIT" },
+                                  { "prim": "VIEW", "args": [ { "string": "latestRound" }, { "prim": "nat" } ] },
+                                  {
+                                    "prim": "IF_NONE",
+                                    "args": [ [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Invalid view" } ] }, { "prim": "FAILWITH" } ], [] ]
+                                  }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "latestRoundData" },
+                                { "prim": "unit" },
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    { "prim": "int", "annots": [ "%answer" ] },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        { "prim": "nat", "annots": [ "%answeredInRound" ] },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            { "prim": "nat", "annots": [ "%roundId" ] },
+                                            { "prim": "pair", "args": [ { "prim": "timestamp", "annots": [ "%startedAt" ] }, { "prim": "timestamp", "annots": [ "%updatedAt" ] } ] }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                [
+                                  { "prim": "CDR" },
+                                  { "prim": "CDR" },
+                                  { "prim": "UNIT" },
+                                  {
+                                    "prim": "VIEW",
+                                    "args": [
+                                      { "string": "latestRoundData" },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "int", "annots": [ "%answer" ] },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "nat", "annots": [ "%answeredInRound" ] },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "nat", "annots": [ "%roundId" ] },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [ { "prim": "timestamp", "annots": [ "%startedAt" ] }, { "prim": "timestamp", "annots": [ "%updatedAt" ] } ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "prim": "IF_NONE",
+                                    "args": [ [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Invalid view" } ] }, { "prim": "FAILWITH" } ], [] ]
+                                  }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "getAnswer" },
+                                { "prim": "nat" },
+                                { "prim": "int" },
+                                [
+                                  { "prim": "UNPAIR" },
+                                  { "prim": "SWAP" },
+                                  { "prim": "CDR" },
+                                  { "prim": "SWAP" },
+                                  { "prim": "VIEW", "args": [ { "string": "getAnswer" }, { "prim": "int" } ] },
+                                  {
+                                    "prim": "IF_NONE",
+                                    "args": [ [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Invalid view" } ] }, { "prim": "FAILWITH" } ], [] ]
+                                  }
+                                ]
+                              ]
+                            },
+                            {
+                              "prim": "view",
+                              "args": [
+                                { "string": "getRoundData" },
+                                { "prim": "nat" },
+                                {
+                                  "prim": "pair",
+                                  "args": [
+                                    { "prim": "int", "annots": [ "%answer" ] },
+                                    {
+                                      "prim": "pair",
+                                      "args": [
+                                        { "prim": "nat", "annots": [ "%answeredInRound" ] },
+                                        {
+                                          "prim": "pair",
+                                          "args": [
+                                            { "prim": "nat", "annots": [ "%roundId" ] },
+                                            { "prim": "pair", "args": [ { "prim": "timestamp", "annots": [ "%startedAt" ] }, { "prim": "timestamp", "annots": [ "%updatedAt" ] } ] }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                [
+                                  { "prim": "UNPAIR" },
+                                  { "prim": "SWAP" },
+                                  { "prim": "CDR" },
+                                  { "prim": "SWAP" },
+                                  {
+                                    "prim": "VIEW",
+                                    "args": [
+                                      { "string": "getRoundData" },
+                                      {
+                                        "prim": "pair",
+                                        "args": [
+                                          { "prim": "int", "annots": [ "%answer" ] },
+                                          {
+                                            "prim": "pair",
+                                            "args": [
+                                              { "prim": "nat", "annots": [ "%answeredInRound" ] },
+                                              {
+                                                "prim": "pair",
+                                                "args": [
+                                                  { "prim": "nat", "annots": [ "%roundId" ] },
+                                                  {
+                                                    "prim": "pair",
+                                                    "args": [ { "prim": "timestamp", "annots": [ "%startedAt" ] }, { "prim": "timestamp", "annots": [ "%updatedAt" ] } ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "prim": "IF_NONE",
+                                    "args": [ [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Invalid view" } ] }, { "prim": "FAILWITH" } ], [] ]
+                                  }
+                                ]
+                              ]
+                            },
+                            { "prim": "view", "args": [ { "string": "get_owner" }, { "prim": "unit" }, { "prim": "address" }, [ { "prim": "CDR" }, { "prim": "CAR" } ] ] }
+                          ]
+                        ]
+                      },
+                      { "prim": "DIG", "args": [ { "int": "2" } ] },
+                      { "prim": "SWAP" },
+                      { "prim": "CONS" },
+                      { "prim": "SWAP" },
+                      { "prim": "EMIT", "args": [ { "prim": "address" } ], "annots": [ "%NewForwarder" ] },
+                      { "prim": "CONS" }
+                    ],
+                    [
+                      { "prim": "DIG", "args": [ { "int": "2" } ] },
+                      { "prim": "DROP" },
+                      { "prim": "DIG", "args": [ { "int": "2" } ] },
+                      { "prim": "DROP" },
+                      { "prim": "CDR" },
+                      { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                      { "prim": "SWAP" },
+                      { "prim": "PUSH", "args": [ { "prim": "mutez" }, { "int": "0" } ] },
+                      { "prim": "DUP", "args": [ { "int": "4" } ] },
+                      { "prim": "CDR" },
+                      { "prim": "TRANSFER_TOKENS" },
+                      { "prim": "CONS" }
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  "prim": "IF_LEFT",
+                  "args": [
+                    [
+                      { "prim": "DROP" },
+                      { "prim": "SENDER" },
+                      { "prim": "PAIR" },
+                      { "prim": "EXEC" },
+                      { "prim": "UNPAIR" },
+                      { "prim": "IF", "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Ownable_NotOwner" } ] }, { "prim": "FAILWITH" } ] ] },
+                      { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                      { "prim": "DIG", "args": [ { "int": "2" } ] },
+                      { "prim": "PUSH", "args": [ { "prim": "address" }, { "string": "tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU" } ] },
+                      { "prim": "SWAP" },
+                      { "prim": "DUG", "args": [ { "int": "3" } ] },
+                      { "prim": "PAIR", "args": [ { "int": "3" } ] },
+                      { "prim": "EXEC" },
+                      { "prim": "CDR" },
+                      { "prim": "UNPAIR" }
+                    ],
+                    [
+                      {
+                        "prim": "IF_LEFT",
+                        "args": [
+                          [
+                            { "prim": "DIG", "args": [ { "int": "2" } ] },
+                            { "prim": "SENDER" },
+                            { "prim": "SWAP" },
+                            { "prim": "DIG", "args": [ { "int": "3" } ] },
+                            { "prim": "DIG", "args": [ { "int": "2" } ] },
+                            { "prim": "PAIR" },
+                            { "prim": "EXEC" },
+                            { "prim": "UNPAIR" },
+                            { "prim": "DIG", "args": [ { "int": "3" } ] },
+                            { "prim": "DIG", "args": [ { "int": "2" } ] },
+                            { "prim": "DIG", "args": [ { "int": "3" } ] },
+                            { "prim": "DIG", "args": [ { "int": "3" } ] },
+                            { "prim": "IF", "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "Ownable_NotOwner" } ] }, { "prim": "FAILWITH" } ] ] },
+                            { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+                            { "prim": "DIG", "args": [ { "int": "3" } ] },
+                            { "prim": "DIG", "args": [ { "int": "2" } ] },
+                            { "prim": "SWAP" },
+                            { "prim": "DUG", "args": [ { "int": "3" } ] },
+                            { "prim": "PAIR", "args": [ { "int": "3" } ] },
+                            { "prim": "EXEC" },
+                            { "prim": "CDR" },
+                            { "prim": "UNPAIR" }
+                          ],
+                          [
+                            { "prim": "DIG", "args": [ { "int": "3" } ] },
+                            { "prim": "DROP" },
+                            { "prim": "DIG", "args": [ { "int": "2" } ] },
+                            { "prim": "SENDER" },
+                            { "prim": "SWAP" },
+                            { "prim": "DIG", "args": [ { "int": "3" } ] },
+                            { "prim": "DIG", "args": [ { "int": "2" } ] },
+                            { "prim": "PAIR" },
+                            { "prim": "EXEC" },
+                            { "prim": "UNPAIR" },
+                            { "prim": "SWAP" },
+                            { "prim": "DUG", "args": [ { "int": "2" } ] },
+                            {
+                              "prim": "IF",
+                              "args": [ [], [ { "prim": "PUSH", "args": [ { "prim": "string" }, { "string": "BACKED_ORACLE_FACTORY_NotOwner" } ] }, { "prim": "FAILWITH" } ] ]
+                            },
+                            { "prim": "UPDATE", "args": [ { "int": "1" } ] },
+                            { "prim": "NIL", "args": [ { "prim": "operation" } ] }
+                          ]
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              ]
+            ]
+          },
+          { "prim": "NIL", "args": [ { "prim": "operation" } ] },
+          { "prim": "SWAP" },
+          { "prim": "ITER", "args": [ [ { "prim": "CONS" } ] ] },
+          { "prim": "PAIR" }
+        ]
+      ]
+    },
+    { "prim": "view", "args": [ { "string": "get_owner" }, { "prim": "unit" }, { "prim": "address" }, [ { "prim": "CDR" }, { "prim": "CDR" } ] ] }
+  ]
