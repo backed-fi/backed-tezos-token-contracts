@@ -18,6 +18,8 @@ make flextesa-sandbox
 
 Sandbox UI is now available at http://localhost:8000
 
+RPC is now available at http://localhost:20000
+
 Accounts to use:
 
 - alice
@@ -36,39 +38,39 @@ make sandbox-down
 make sandbox-clear
 ```
 
-## Test
+# Test
 
-### Backed Token Factory
+- ### Backed Token Factory
 
 ```
 npm run backed_token_factory:test
 ```
 
-### Backed Token
+- ### Backed Token
 
 ```
 npm run backed_token:test
 ```
 
-### Backed Oracle Factory
+- ### Backed Oracle Factory
 
 ```
 npm run backed_oracle_factory:test
 ```
 
-### Backed Oracle
+- ### Backed Oracle
 
 ```
 npm run backed_oracle:test
 ```
 
-## Origination
+# Origination
 
 ### 1. Fill missing data in `.env` file.
 
-### Backed Token Factory
+- ### Backed Token Factory
 
-#### NOTE: This step should be done only once
+  #### NOTE: This step should be done only once
 
 1. Generate Michelson code
 
@@ -83,9 +85,9 @@ npm run backed_token_factory:originate
 npm run backed_token_factory:deploy
 ```
 
-### Backed Oracle Factory
+- ### Backed Oracle Factory
 
-#### NOTE: This step should be done only once
+  #### NOTE: This step should be done only once
 
 1. Generate Michelson code
 
@@ -101,11 +103,11 @@ npm run backed_oracle_factory:originate
 npm run backed_oracle_factory:deploy
 ```
 
-## Deployment
+# Deployment
 
 ### 1. Fill missing data in `.env` file.
 
-### Backed Token
+- ### Backed Token
 
 1. Update related constant values in `scripts/backed_token_factory/deploy_token.ts` file
 
@@ -115,7 +117,7 @@ npm run backed_oracle_factory:deploy
 npm run backed_token:deploy
 ```
 
-### Backed Oracle
+- ### Backed Oracle
 
 1. Update related constant values in `scripts/backed_oracle_factory/deploy_oracle.ts` file
 
