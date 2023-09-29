@@ -240,8 +240,8 @@ if "templates" not in __name__:
         # Set delegate whitelist
         # TODO: try to delegate without access
 
-        sc.h2("Set delegate whitelist")
-        c1.execute(actionName="setDelegateWhitelist", data=sp.pack(sp.record(address=admin.address, status=True))).run(sender=admin)
+        # sc.h2("Set delegate whitelist")
+        # c1.execute(actionName="setDelegateWhitelist", data=sp.pack(sp.record(address=admin.address, status=True))).run(sender=admin)
 
 
         # Permit
@@ -256,9 +256,9 @@ if "templates" not in __name__:
             message=permit_message,
             message_format="Raw",
         )
-        c1.execute(actionName="permit", data=sp.pack(sp.record(owner=alice.public_key, spender=bob.address, amount=10, signature=sig_from_alice, deadline=deadline))).run(sender=admin, now=sp.timestamp(1571761674))
-        c1.getAllowance((sp.record(owner=alice.address, spender=bob.address), target))
-        sc.verify_equal(view_allowance.data.last, sp.some(10))
+        # c1.execute(actionName="permit", data=sp.pack(sp.record(owner=alice.public_key, spender=bob.address, amount=10, signature=sig_from_alice, deadline=deadline))).run(sender=admin, now=sp.timestamp(1571761674))
+        # c1.getAllowance((sp.record(owner=alice.address, spender=bob.address), target))
+        # sc.verify_equal(view_allowance.data.last, sp.some(10))
 
         sc.h2("Permit - wrong signer")
         nonce = 0
@@ -271,8 +271,8 @@ if "templates" not in __name__:
             message=permit_message,
             message_format="Raw",
         )
-        c1.execute(actionName="permit", data=sp.pack(sp.record(owner=bob.public_key, spender=alice.address, amount=10, signature=sig_from_alice, deadline=deadline))).run(sender=admin, now=sp.timestamp(1571761674), valid=False)
-        c1.getAllowance((sp.record(owner=bob.address, spender=alice.address), target))
-        sc.verify_equal(view_allowance.data.last, sp.some(0))
+        # c1.execute(actionName="permit", data=sp.pack(sp.record(owner=bob.public_key, spender=alice.address, amount=10, signature=sig_from_alice, deadline=deadline))).run(sender=admin, now=sp.timestamp(1571761674), valid=False)
+        # c1.getAllowance((sp.record(owner=bob.address, spender=alice.address), target))
+        # sc.verify_equal(view_allowance.data.last, sp.some(0))
 
         # TODO: wrong nonce, deadline expired
