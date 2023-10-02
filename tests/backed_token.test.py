@@ -3,7 +3,6 @@ from contracts.backed_token import BackedTokenModule
 from contracts.utils.ownable import OwnableModule 
 from contracts.utils.pausable import PausableModule
 from contracts.utils.nonce import NonceModule
-# from contracts.utils.upgradable import UpgradableModule
 
 from contracts.actions.token.mint import MintModule 
 from contracts.actions.token.set_minter import SetMinterModule 
@@ -63,7 +62,6 @@ if "templates" not in __name__:
         sc = sp.test_scenario([
             OwnableModule,
             PausableModule,
-            # UpgradableModule,
             NonceModule,
             BackedTokenStorageModule,
             MintModule,
@@ -299,6 +297,25 @@ if "templates" not in __name__:
         # sc.verify_equal(view_allowance.data.last, sp.some(0))
 
         # TODO: wrong nonce, deadline expired
+
+
+        # Increase allowance
+        sc.h2("Increase allowance")
+        
+        sc.verify(c1.data.storage.balances[alice.address].approvals[bob.address] == 1)
+        c1.execute(actionName="increaseAllowance", data=sp.pack(sp.record(spender=bob.address, value=sp.nat(1)))).run(sender=alice)
+        sc.verify(c1.data.storage.balances[alice.address].approvals[bob.address] == 2)
+
+        # Decrease allowance
+        sc.h2("Decrease allowance")
+        
+        sc.verify(c1.data.storage.balances[alice.address].approvals[bob.address] == 2)
+        c1.execute(actionName="decreaseAllowance", data=sp.pack(sp.record(spender=bob.address, value=sp.nat(1)))).run(sender=alice)
+        sc.verify(c1.data.storage.balances[alice.address].approvals[bob.address] == 1)
+
+        sc.h2("Allowance cannot be less than zero")
+        c1.execute(actionName="decreaseAllowance", data=sp.pack(sp.record(spender=bob.address, value=sp.nat(2)))).run(sender=alice, valid=False)
+
         # Set burner
         sc.h2("Set burner")
         sc.h2("Sender not admin")
