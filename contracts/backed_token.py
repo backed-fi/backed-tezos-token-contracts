@@ -7,26 +7,17 @@ from contracts.utils.pausable import PausableModule
 from contracts.utils.nonce import NonceModule
 from contracts.storage.backed_token import BackedTokenStorageModule
 
-# The metadata below is just an example, it serves as a base,
-# the contents are used to build the metadata JSON that users
-# can copy and upload to IPFS.
-TZIP16_Metadata_Base = {
-    "name": "SmartPy FA1.2 Token Template",
-    "description": "Example Template for an FA1.2 Contract from SmartPy",
-    "authors": ["SmartPy Dev Team <email@domain.com>"],
-    "homepage": "https://smartpy.io",
-    "interfaces": ["TZIP-007-2021-04-17", "TZIP-016-2021-04-17"],
-}
-
 @sp.module
 def BackedTokenModule():
+    BACKED_TERMS = "https://www.backedassets.fi/legal-documentation"
+
     class CommonInterface(OwnableModule.OwnableInterface, PausableModule.PausableInterface, NonceModule.NonceInterface):
         def __init__(self, minter, burner):
             OwnableModule.OwnableInterface.__init__(self)
             PausableModule.PausableInterface.__init__(self)
             NonceModule.NonceInterface.__init__(self)
             sp.cast(self.data.storage, BackedTokenStorageModule.BackedToken)
-            self.data.storage.terms = "https://www.backedassets.fi/legal-documentation"
+            self.data.storage.terms = BACKED_TERMS
             self.data.storage.balances = sp.big_map()
             self.data.storage.total_supply = 0
             self.data.storage.token_metadata = sp.big_map()
@@ -73,16 +64,6 @@ def BackedTokenModule():
                 self.data.storage.balances[owner.key] = owner.value
                 self.data.storage.total_supply += owner.value.balance
 
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        # @param metadata - sp.address      The address of the account that will be set as owner of the contract
-        # @param ledger - sp.address      The address of the account that will be set as owner of the contract
-        # @param token_metadata - sp.address      The address of the account that will be set as owner of the contract
-        # @param implementation - sp.address      The address of the account that will be set as owner of the contract
-        # @param minter - sp.address      The address of the account that will be set as owner of the contract
-        # @param burner - sp.address      The address of the account that will be set as owner of the contract
-        # @param pauser - sp.address      The address of the account that will be set as owner of the contract
-        #
         @sp.private(with_storage='read-write')
         def invoke(self, params):
             sp.cast(params, sp.record(actionName=sp.string, data=sp.bytes))
@@ -91,10 +72,10 @@ def BackedTokenModule():
 
             self.data.storage = updated_storage
 
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        # @param metadata - sp.address      The address of the account that will be set as owner of the contract
-        #
+        ##
+        # @devs Executes action registered in implementation registry. 
+        # @param actionName - sp.string     Action's name registered in implementation registry
+        # @param data - sp.bytes        Packed action data in proper format
         @sp.entrypoint
         def execute(self, actionName, data):
             assert not self.isPaused(), "BACKED_TOKEN_Paused"
@@ -106,9 +87,8 @@ def BackedTokenModule():
 
             self.invoke(sp.record(actionName=actionName, data=data))
   
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        #
+        ##
+        # @dev Moves a `value` amount of tokens from the 'from' account to `to`.
         @sp.entrypoint
         def transfer(self, param):
             assert not self.isPaused(), "BACKED_TOKEN_Paused"
@@ -123,9 +103,8 @@ def BackedTokenModule():
 
             self.invoke(sp.record(actionName='transfer', data=data))
 
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        #
+        ##
+        # @dev Sets a `value` amount of tokens as the allowance of `spender` over the caller's tokens.
         @sp.entrypoint
         def approve(self, param):
             assert not self.isPaused(), "BACKED_TOKEN_Paused"
@@ -139,9 +118,8 @@ def BackedTokenModule():
             data = sp.pack(param)
             self.invoke(sp.record(actionName='approve', data=data))
 
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        #
+        ##
+        # @dev Returns the value of tokens owned by `address`.
         @sp.entrypoint
         def getBalance(self, param):
             (address, callback) = param
@@ -150,9 +128,9 @@ def BackedTokenModule():
             ).balance
             sp.transfer(result, sp.tez(0), callback)
 
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        #
+        ##
+        # @dev Returns the remaining number of tokens that `spender` will be
+        # allowed to spend on behalf of `owner`. This is zero by default.
         @sp.entrypoint
         def getAllowance(self, param):
             (args, callback) = param
@@ -161,20 +139,17 @@ def BackedTokenModule():
             ).approvals.get(args.spender, default=0)
             sp.transfer(result, sp.tez(0), callback)
 
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        #
+        ##
+        # @dev Returns the value of tokens in existence.
         @sp.entrypoint
         def getTotalSupply(self, param):
             sp.cast(param, sp.pair[sp.unit, sp.contract[sp.nat]])
             sp.transfer(self.data.storage.total_supply, sp.tez(0), sp.snd(param))
 
-        # TODO:
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        #
+        ##
+        # @devs Return the token-metadata URI for the given token. (token_id must be 0)."
         @sp.offchain_view()
         def token_metadata(self, token_id):
-            """Return the token-metadata URI for the given token. (token_id must be 0)."""
             sp.cast(token_id, sp.nat)
             return self.data.storage.token_metadata[token_id]
 
@@ -190,33 +165,38 @@ def BackedTokenModule():
     # 
     #
     class BackedToken(OwnableModule.Ownable, PausableModule.Pausable, NonceModule.Nonce, Fa1_2):
-        # TODO:
+        ##
         # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        # @param metadata - sp.address      The address of the account that will be set as owner of the contract
-        # @param ledger - sp.address      The address of the account that will be set as owner of the contract
-        # @param token_metadata - sp.address      The address of the account that will be set as owner of the contract
-        # @param implementation - sp.address      The address of the account that will be set as owner of the contract
-        # @param minter - sp.address      The address of the account that will be set as owner of the contract
-        # @param burner - sp.address      The address of the account that will be set as owner of the contract
-        # @param pauser - sp.address      The address of the account that will be set as owner of the contract
-        #
+        # @param metadata - sp.big_map      Contract-specific metadata
+        # @param ledger - sp.big_map      Initial balances
+        # @param token_metadata - sp.big_map      Token-specific metadata
+        # @param implementation - sp.big_map      Implementation of the actions in form of lambdas that take storage and return updated one,
+        # @param minter - sp.address      The address of the account that will be set as minter of the contract
+        # @param burner - sp.address      The address of the account that will be set as burner of the contract
+        # @param pauser - sp.address      The address of the account that will be set as pauser of the contract
         def __init__(self, owner, metadata, ledger, token_metadata, implementation, minter, burner, pauser):
             OwnableModule.Ownable.__init__(self, owner)
             PausableModule.Pausable.__init__(self, pauser)
             NonceModule.Nonce.__init__(self)
             Fa1_2.__init__(self, metadata, ledger, token_metadata, implementation, minter, burner)
-
+        ##
+        # @dev An entrypoint to allow the contract metadata to be updated
+        # 
+        # @param key - sp.string    Metadata's key for entry that will be changed
+        # @param key - sp.bytes    Updated metadata data
         @sp.entrypoint
         def updateMetadata(self, key, value):
-            """An entrypoint to allow the contract metadata to be updated."""
             assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
             self.data.storage.metadata[key] = value
 
-
+        ##
+        # @dev Update the implementation for future deployments. Callable only by the factory owner
+        # 
+        # @param implementation - sp.big_map    New implementation of the actions in form of lambdas that take storage and return updated one
         @sp.entrypoint
-        def updateAction(self, actionName, actionEntry):
+        def updateImplementation(self, implementation):
             assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
-            
-            self.data.implementation[actionName] = actionEntry
+
+            self.data.implementation = implementation
 
   

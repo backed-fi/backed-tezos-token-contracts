@@ -16,7 +16,6 @@ def PausableModule():
         # @dev Initializes the contract in unpaused state and setting the address provided by the deployer as the initial pauser
         #
         # @param pauser - sp.address    pauser account
-        #
         def __init__(self, pauser):
             OwnableModule.OwnableInterface.__init__(self)
             self.data.pauser = pauser

@@ -14,14 +14,12 @@ def OwnableModule():
         # @dev Initializes the contract setting the address provided by the deployer as the initial owner.
         #
         # @param owner - sp.address     initial owner
-        #
         def __init__(self, owner):
             self.data.owner = owner
         ##
         # @dev Verifies sender as contract owner. Returns True if sender is owner and False if not.
         #
         # @param sender - sp.address    address that will be checked
-        #
         @sp.private(with_storage="read-only")
         def isOwner(self, sender):
             return sender == self.data.owner
