@@ -1,9 +1,6 @@
 import smartpy as sp
 
-from contracts.backed_token import BackedTokenModule
-
 from contracts.utils.ownable import OwnableModule
-from contracts.utils.pausable import PausableModule
 
 @sp.module
 def BackedOracleForwarderModule():

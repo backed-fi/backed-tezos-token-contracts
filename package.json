@@ -18,7 +18,7 @@
     "backed_oracle_factory:deploy": "npx ts-node scripts/backed_oracle_factory/deploy_oracle_factory.ts",
     "backed_oracle_factory:update": "npx ts-node scripts/backed_oracle_factory/update_implementation.ts",
     "backed_oracle:test": "./smartpy test tests/backed_oracle.test.py output",
-    "backed_oracle:deploy": "npx ts-node scripts/backed_oracle_factory/deploy_oracle.ts"
+    "backed_oracle_forwarder:test": "./smartpy test tests/backed_oracle_forwarder.test.py output"
   },
   "repository": {
     "type": "git",

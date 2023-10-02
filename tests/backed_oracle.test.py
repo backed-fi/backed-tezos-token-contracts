@@ -8,13 +8,7 @@ from contracts.actions.oracle.update_answer import UpdateAnswerModule
 
 @sp.module
 def TestModule():
-    class Viewer_nat(sp.Contract):
-        def __init__(self):
-            self.data.last = sp.cast(None, sp.option[sp.nat])
-
-        @sp.entrypoint
-        def target(self, params):
-            self.data.last = sp.Some(params)
+    RANDOM_CONSTANT = "const"
 
 if "templates" not in __name__:
     @sp.add_test(name="backed_oracle")
@@ -35,12 +29,12 @@ if "templates" not in __name__:
         decimals = "18"
         description = "Backed Oracle contract"
         error = "No data present"
-
+        implementation = sp.big_map({
+                "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
+        })
         oracle = BackedOracleModule.BackedOracle(
             owner=admin.address,
-            implementation=sp.big_map({
-                "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
-            }),
+            implementation = implementation,
             updater=admin.address,
             decimals=decimals,
             description=description
@@ -185,5 +179,18 @@ if "templates" not in __name__:
             updatedAt=first_round_timestamp,
             answeredInRound=sp.nat(1)
         ))
+
+        sc.h2("Update implementation")
+
+        updatedImplementation = sp.big_map({
+            "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
+        })
+
+        sc.h2("Sender is admin")
+        oracle.updateImplementation(updatedImplementation).run(sender=alice, valid=False)
+        
+        sc.h2("Sender is not admin")
+        oracle.updateImplementation(updatedImplementation).run(sender=admin)
+
 
 

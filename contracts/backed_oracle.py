@@ -108,4 +108,14 @@ def BackedOracleModule():
 
             self.data.storage = updated_storage
 
+        ##
+        # @dev Update the implementation. Callable only by the owner
+        # 
+        # @param implementation - sp.big_map    New implementation of the actions in form of lambdas that take storage and return updated one
+        @sp.entrypoint
+        def updateImplementation(self, implementation):
+            assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
+
+            self.data.implementation = implementation
+
             

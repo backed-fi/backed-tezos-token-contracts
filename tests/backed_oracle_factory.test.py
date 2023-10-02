@@ -12,13 +12,7 @@ from contracts.actions.oracle.update_answer import UpdateAnswerModule
 
 @sp.module
 def TestModule():
-    class Viewer_nat(sp.Contract):
-        def __init__(self):
-            self.data.last = sp.cast(None, sp.option[sp.nat])
-
-        @sp.entrypoint
-        def target(self, params):
-            self.data.last = sp.Some(params)
+    RANDOM_CONSTANT = "const"
 
 if "templates" not in __name__:
     @sp.add_test(name="backed_oracle_factory")
@@ -41,19 +35,27 @@ if "templates" not in __name__:
         implementation=sp.big_map({
             "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
         })
-
         factory = BackedOracleFactoryModule.BackedOracleFactory(owner=admin.address, implementation=implementation)
 
         sc += factory
 
         sc.h1("Deploy Oracle")
-        sc.h2("Sender is not admin")
 
+        sc.h2("Sender is not admin")
         factory.deployOracle(owner=admin.address, updater=admin.address, decimals="18", description="Backed Oracle").run(sender=alice, valid=False)
 
         sc.h2("Sender is admin")
-
         factory.deployOracle(owner=admin.address, updater=admin.address, decimals="18", description="Backed Oracle").run(sender=admin)
+
+        updatedImplementation=sp.big_map({
+            "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
+        })
+
+        sc.h2("Sender is not admin")
+        factory.updateImplementation(updatedImplementation).run(sender=alice, valid=False)
+        sc.h2("Sender is admin")
+        factory.updateImplementation(updatedImplementation).run(sender=admin)
+
 
 
 

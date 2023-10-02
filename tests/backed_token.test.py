@@ -3,6 +3,7 @@ from contracts.backed_token import BackedTokenModule
 from contracts.utils.ownable import OwnableModule 
 from contracts.utils.pausable import PausableModule
 from contracts.utils.nonce import NonceModule
+# from contracts.utils.upgradable import UpgradableModule
 
 from contracts.actions.token.mint import MintModule 
 from contracts.actions.token.set_minter import SetMinterModule 
@@ -62,6 +63,7 @@ if "templates" not in __name__:
         sc = sp.test_scenario([
             OwnableModule,
             PausableModule,
+            # UpgradableModule,
             NonceModule,
             BackedTokenStorageModule,
             MintModule,
@@ -101,9 +103,7 @@ if "templates" not in __name__:
                 "https://assets.website-files.com/6418671e8e48de1967843312/64e39beb6a4b261e47c6c763_bIB01.svg"
             ),
         }
-        token_metadata2 = sp.big_map(
-                {0: sp.record(token_id=0, token_info=token_metadata)}
-            )
+    
         contract_metadata = sp.utils.metadata_of_url(
             "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
         )
@@ -164,10 +164,12 @@ if "templates" not in __name__:
         sc.verify(c1.data.storage.metadata[""] == sp.bytes("0x00"))
 
         sc.h1("Entrypoints")
-        sc.h2("Admin mints a few coins")
+        sc.h2("Minter mints a few coins")
         c1.execute(actionName="mint", data=sp.pack(sp.record(address=alice.address, value=12))).run(sender=admin)
         c1.execute(actionName="mint", data=sp.pack(sp.record(address=alice.address, value=3))).run(sender=admin)
         c1.execute(actionName="mint", data=sp.pack(sp.record(address=alice.address, value=3))).run(sender=admin)
+        sc.h2("Alice tries to mint a few coins")
+        c1.execute(actionName="mint", data=sp.pack(sp.record(address=alice.address, value=3))).run(sender=alice, valid=False)
 
         sc.h2("Alice transfers to Bob")
         c1.transfer(from_=alice.address, to_=bob.address, value=4).run(sender=alice)
@@ -183,11 +185,13 @@ if "templates" not in __name__:
         c1.transfer(from_=alice.address, to_=bob.address, value=4).run(
             sender=bob, valid=False
         )
-        sc.h2("Admin burns Bob token")
+        sc.h2("Burner burns Bob token")
         c1.execute(actionName="burn", data=sp.pack(sp.record(address=bob.address, value=1))).run(sender=admin)
         sc.verify(c1.data.storage.balances[alice.address].balance == 10)
         sc.h2("Alice tries to burn Bob token")
         c1.execute(actionName="burn", data=sp.pack(sp.record(address=bob.address, value=1))).run(sender=alice, valid=False)
+        sc.h2("Alice tries to burn her token")
+        c1.execute(actionName="burn", data=sp.pack(sp.record(address=alice.address, value=1))).run(sender=alice, valid=False)
         sc.h2("Admin pauses the contract and Alice cannot transfer anymore")
         c1.setPause(True).run(sender=admin)
         c1.transfer(from_=alice.address, to_=bob.address, value=4).run(
@@ -235,7 +239,7 @@ if "templates" not in __name__:
         sc.verify_equal(view_allowance.data.last, sp.some(1))
 
         sc.h2("Update implementation")
-        implementation=sp.big_map({
+        updatedImplementation=sp.big_map({
                 "mint": sp.record(action=TestModule.mint, only_admin=False),
                 "burn": sp.record(action=BurnModule.burn, only_admin=False),
                 "approve": sp.record(action=ApproveModule.approve, only_admin=False),
@@ -250,7 +254,11 @@ if "templates" not in __name__:
                 # "setDelegateMode": sp.record(action=SetDelegateModeModule.setDelegateMode, only_admin=True),
                 # "setDelegateWhitelist": sp.record(action=SetDelegateWhitelistModule.setDelegateWhitelist, only_admin=True),
             })
-        c1.updateImplementation(implementation).run(sender=admin)
+        sc.h2("Not an owner")
+        c1.updateImplementation(updatedImplementation).run(sender=alice, valid=False)
+        
+        sc.h2("Owner")
+        c1.updateImplementation(updatedImplementation).run(sender=admin)
 
         # Set delegate whitelist
         # TODO: try to delegate without access
@@ -291,3 +299,40 @@ if "templates" not in __name__:
         # sc.verify_equal(view_allowance.data.last, sp.some(0))
 
         # TODO: wrong nonce, deadline expired
+        # Set burner
+        sc.h2("Set burner")
+        sc.h2("Sender not admin")
+        c1.execute(actionName="setBurner", data=sp.pack(alice.address)).run(sender=alice, valid=False)
+       
+        sc.h2("Sender is admin")
+        c1.execute(actionName="setBurner", data=sp.pack(alice.address)).run(sender=admin)
+        sc.verify(
+            c1.data.storage.roles.burner
+            == alice.address
+        )
+
+        # Set minter
+        sc.h2("Set minter")
+        sc.h2("Sender not admin")
+        c1.execute(actionName="setMinter", data=sp.pack(alice.address)).run(sender=alice, valid=False)
+       
+        sc.h2("Sender is admin")
+        c1.execute(actionName="setMinter", data=sp.pack(alice.address)).run(sender=admin)
+        sc.verify(
+            c1.data.storage.roles.minter
+            == alice.address
+        )
+
+        # Set terms
+        sc.h2("Set terms")
+        terms = "updatedTerms"
+        sc.h2("Sender not admin")
+        c1.execute(actionName="setTerms", data=sp.pack(terms)).run(sender=alice, valid=False)
+       
+        sc.h2("Sender is admin")
+        c1.execute(actionName="setTerms", data=sp.pack(terms)).run(sender=admin)
+        sc.verify(
+            c1.data.storage.terms
+            == terms
+        )
+

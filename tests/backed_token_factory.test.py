@@ -104,6 +104,27 @@ if "templates" not in __name__:
 
         sc.h1("Attempt to deploy token")
 
+        sc.h2("Sender not admin")
+        factory.deployToken(
+            tokenOwner=admin.address,
+            minter=admin.address,
+            burner=admin.address,
+            pauser=admin.address,
+            # TODO:
+            # metadata=sp.utils.metadata_of_url(
+            # "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
+            # ),
+            metadata=sp.utils.bytes_of_string(
+            "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
+            ),
+            name=sp.utils.bytes_of_string("Backed IB01 $ Treasury Bond 0-1yr"),
+            symbol=sp.utils.bytes_of_string("bIB01"),
+            icon=sp.utils.bytes_of_string(
+                "https://assets.website-files.com/6418671e8e48de1967843312/64e39beb6a4b261e47c6c763_bIB01.svg"
+            ),
+            decimals=sp.utils.bytes_of_string("18")
+        ).run(sender=alice, valid=False)
+        sc.h2("Sender is admin")
         factory.deployToken(
             tokenOwner=admin.address,
             minter=admin.address,
@@ -124,7 +145,7 @@ if "templates" not in __name__:
             decimals=sp.utils.bytes_of_string("18")
         ).run(sender=admin)
 
-
+        sc.h1("Update implementation")
         updated_implementation = sp.big_map({
             "mint": sp.record(action=TestModule.mint, only_admin=True),
             "burn": sp.record(action=BurnModule.burn, only_admin=True),
@@ -137,5 +158,9 @@ if "templates" not in __name__:
             "decreaseAllowance": sp.record(action=DecreaseAllowanceModule.decreaseAllowance, only_admin=False),
         })
 
+        sc.h2("Sender is not admin")
+        factory.updateImplementation(updated_implementation).run(sender=alice, valid=False)
+
+        sc.h2("Sender is admin")
         factory.updateImplementation(updated_implementation).run(sender=admin)
         

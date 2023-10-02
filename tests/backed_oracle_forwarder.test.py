@@ -10,13 +10,7 @@ from contracts.actions.oracle.update_answer import UpdateAnswerModule
 
 @sp.module
 def TestModule():
-    class Viewer_nat(sp.Contract):
-        def __init__(self):
-            self.data.last = sp.cast(None, sp.option[sp.nat])
-
-        @sp.entrypoint
-        def target(self, params):
-            self.data.last = sp.Some(params)
+    RANDOM_CONSTANT = "const"
 
 if "templates" not in __name__:
     @sp.add_test(name="backed_oracle_forwarder")
@@ -160,10 +154,10 @@ if "templates" not in __name__:
 
         sc += new_oracle
 
-        sc.h2("Sender has not have Admin role")
+        sc.h2("Sender is not admin")
         oracleForwarder.setUpstreamOracle(new_oracle.address).run(sender=alice, valid=False)
 
-        sc.h2("Sender has Admin role")
+        sc.h2("Sender is admin")
         oracleForwarder.setUpstreamOracle(new_oracle.address).run(sender=admin)
         sc.verify(oracleForwarder.data.upstreamOracle == new_oracle.address)
 

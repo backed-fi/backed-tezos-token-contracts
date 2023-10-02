@@ -7,6 +7,7 @@ from contracts.utils.pausable import PausableModule
 
 @sp.module
 def BackedTokenFactoryModule():
+    BACKED_TERMS = "https://www.backedassets.fi/legal-documentation"
     ##
     # @dev
     #
@@ -71,7 +72,7 @@ def BackedTokenFactoryModule():
                         metadata=metadata_storage,
                         total_supply=0,
                         token_metadata=token_metadata_storage,
-                        terms="https://www.backedassets.fi/legal-documentation",
+                        terms=BACKED_TERMS,
                         roles=sp.record(minter=minter, burner=burner),
                         nonce=sp.big_map(),
                         delegateMode=False,

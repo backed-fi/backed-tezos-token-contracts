@@ -190,7 +190,7 @@ def BackedTokenModule():
             self.data.storage.metadata[key] = value
 
         ##
-        # @dev Update the implementation for future deployments. Callable only by the factory owner
+        # @dev Update the implementation. Callable only by the owner
         # 
         # @param implementation - sp.big_map    New implementation of the actions in form of lambdas that take storage and return updated one
         @sp.entrypoint
