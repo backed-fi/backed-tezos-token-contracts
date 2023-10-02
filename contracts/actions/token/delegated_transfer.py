@@ -5,19 +5,25 @@ from contracts.storage.backed_token import BackedTokenStorageModule
 def DelegatedTransferModule():
     DelegatedTransferParams: type = sp.record(owner=sp.key, spender=sp.address, amount=sp.nat, deadline=sp.timestamp, signature=sp.signature)
 
-    ##
-    # @dev Perform an intended transfer on one account's behalf, from another account,
-    # who actually pays fees for the transaction. Allowed only if the sender
-    # is whitelisted, or the delegateMode is set to true
-    #
-    # @param owner       Token owner's public key (Authorizer)
-    # @param spender     Spender's address
-    # @param amount       Amount of allowance
-    # @param deadline    Expiration time, seconds since the epoch
-    # @param signature     Signature of the message
-    #
     @sp.effects()
     def delegatedTransfer(storage, data):
+        '''
+        Perform an intended transfer on one account's behalf, from another account,
+        who actually pays fees for the transaction. Allowed only if the sender
+        is whitelisted, or the delegateMode is set to true
+
+        Params:
+        storage (BackedToken storage) - current storage of the BackedToken contract
+        data (sp.bytes) - packed DelegatedTransferParams
+            owner (sp.address) - token owner's public key (Authorizer)
+            spender (sp.address) - spender's address
+            amount (sp.nat) - amount of allowance
+            deadline (sp.timestamp) - expiration time, seconds since the epoch
+            signature (sp.signature) - token owner's signature of the message
+
+        Returns:
+        BackedToken storage: Updated storage object
+        '''
         sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         params = sp.unpack(data, DelegatedTransferParams).unwrap_some(error="BACKED_TOKEN_DelegatedTransfer_CannotUnpackParams")

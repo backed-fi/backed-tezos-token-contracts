@@ -5,15 +5,21 @@ from contracts.storage.backed_token import BackedTokenStorageModule
 def BurnModule():
     BurnParams: type = sp.record(address=sp.address, value=sp.nat)
 
-    ##
-    # @dev Function to burn tokens. Allowed only for burner. The burned tokens
-    # must be from the burner (msg.sender), or from the contract itself
-    #
-    # @param account   The account from which the tokens will be burned
-    # @param amount    The amount of tokens to be burned
-    #
     @sp.effects()
     def burn(storage, data):
+        '''
+        Function to burn tokens. Allowed only for burner. The burned tokens
+        must be from the burner (sp.sender), or from the contract itself
+
+        Params:
+        storage (BackedToken storage) - current storage of the BackedToken contract
+        data (sp.bytes) - packed BurnParams
+            account (sp.address) - the account from which the tokens will be burned
+            amount (sp.nat) - the amount of tokens to be burned
+
+        Returns:
+        BackedToken storage: Updated storage object
+        '''
         assert sp.sender == storage.roles.burner, "BACKED_TOKEN_Burn_NotBurner"
 
         sp.cast(storage, BackedTokenStorageModule.BackedToken)

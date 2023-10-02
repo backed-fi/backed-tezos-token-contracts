@@ -6,15 +6,13 @@ from contracts.utils.ownable import OwnableModule
 
 @sp.module
 def BackedOracleModule():
-    ##
-    # @dev
-    #
-    # Factory contract, used for creating new, upgradable tokens.
-    # 
-    # The contract contains one role:
-    #  - An owner, which can deploy new tokens
-    #
     class BackedOracle(OwnableModule.Ownable):
+        '''
+        Factory contract, used for creating new, upgradable tokens.
+
+        The contract contains one role:
+        - An owner, which can deploy new tokens
+        '''
         def __init__(self, owner, implementation, updater, decimals, description):
             OwnableModule.Ownable.__init__(self, owner)
 
@@ -107,13 +105,15 @@ def BackedOracleModule():
             updated_storage = self.data.implementation[params.actionName].action(sp.record(storage=self.data.storage, data=params.data))
 
             self.data.storage = updated_storage
-
-        ##
-        # @dev Update the implementation. Callable only by the owner
-        # 
-        # @param implementation - sp.big_map    New implementation of the actions in form of lambdas that take storage and return updated one
+ 
         @sp.entrypoint
         def updateImplementation(self, implementation):
+            '''
+            Update the implementation. Callable only by the owner
+
+            Params:
+            implementation (sp.big_map) - New implementation of the actions in form of lambdas that take storage and return updated one
+            '''
             assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
 
             self.data.implementation = implementation

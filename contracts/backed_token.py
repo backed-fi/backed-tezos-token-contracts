@@ -72,12 +72,15 @@ def BackedTokenModule():
 
             self.data.storage = updated_storage
 
-        ##
-        # @devs Executes action registered in implementation registry. 
-        # @param actionName - sp.string     Action's name registered in implementation registry
-        # @param data - sp.bytes        Packed action data in proper format
         @sp.entrypoint
         def execute(self, actionName, data):
+            '''
+            Executes action registered in implementation registry. 
+
+            Params:
+            actionName (sp.string) - action's name registered in implementation registry
+            data (sp.bytes) - packed action data in proper format
+            '''
             assert not self.isPaused(), "BACKED_TOKEN_Paused"
 
             actionEntry = self.data.implementation.get(actionName, error="BACKED_TOKEN_UnknownAction")
@@ -87,10 +90,11 @@ def BackedTokenModule():
 
             self.invoke(sp.record(actionName=actionName, data=data))
   
-        ##
-        # @dev Moves a `value` amount of tokens from the 'from' account to `to`.
         @sp.entrypoint
         def transfer(self, param):
+            '''
+            Moves a `value` amount of tokens from the 'from' account to `to`.
+            '''
             assert not self.isPaused(), "BACKED_TOKEN_Paused"
 
             sp.cast(
@@ -103,10 +107,11 @@ def BackedTokenModule():
 
             self.invoke(sp.record(actionName='transfer', data=data))
 
-        ##
-        # @dev Sets a `value` amount of tokens as the allowance of `spender` over the caller's tokens.
         @sp.entrypoint
         def approve(self, param):
+            '''
+            Sets a `value` amount of tokens as the allowance of `spender` over the caller's tokens.
+            '''
             assert not self.isPaused(), "BACKED_TOKEN_Paused"
 
             sp.cast(
@@ -118,83 +123,93 @@ def BackedTokenModule():
             data = sp.pack(param)
             self.invoke(sp.record(actionName='approve', data=data))
 
-        ##
-        # @dev Returns the value of tokens owned by `address`.
         @sp.entrypoint
         def getBalance(self, param):
+            '''
+            Returns the value of tokens owned by `address`.
+            '''
             (address, callback) = param
             result = self.data.storage.balances.get(
                 address, default=sp.record(balance=0, approvals={})
             ).balance
             sp.transfer(result, sp.tez(0), callback)
 
-        ##
-        # @dev Returns the remaining number of tokens that `spender` will be
-        # allowed to spend on behalf of `owner`. This is zero by default.
         @sp.entrypoint
         def getAllowance(self, param):
+            '''
+            Returns the remaining number of tokens that `spender` will be
+            allowed to spend on behalf of `owner`. This is zero by default.
+            '''
             (args, callback) = param
             result = self.data.storage.balances.get(
                 args.owner, default=sp.record(balance=0, approvals={})
             ).approvals.get(args.spender, default=0)
             sp.transfer(result, sp.tez(0), callback)
 
-        ##
-        # @dev Returns the value of tokens in existence.
         @sp.entrypoint
         def getTotalSupply(self, param):
+            '''
+            Returns the value of tokens in existence.
+            '''
             sp.cast(param, sp.pair[sp.unit, sp.contract[sp.nat]])
             sp.transfer(self.data.storage.total_supply, sp.tez(0), sp.snd(param))
 
-        ##
-        # @devs Return the token-metadata URI for the given token. (token_id must be 0)."
         @sp.offchain_view()
         def token_metadata(self, token_id):
+            '''
+            Return the token-metadata URI for the given token. (token_id must be 0).
+            '''
             sp.cast(token_id, sp.nat)
             return self.data.storage.token_metadata[token_id]
 
-    #
-    # @dev
-    #
-    # This token contract is following the FA1.2 standard. It can be paused by the owner that freezes all actions. It is upgradeable by adding or replacing lambdas for specific actions.
-    # The contract contains three roles:
-    #  - A minter, that can mint new tokens.
-    #  - A burner, that can burn its own tokens, or contract's tokens.
-    #  - A pauser, that can pause or restore all transfers in the contract.
-    #  - An owner, that can set the three above.
-    # 
-    #
     class BackedToken(OwnableModule.Ownable, PausableModule.Pausable, NonceModule.Nonce, Fa1_2):
-        ##
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        # @param metadata - sp.big_map      Contract-specific metadata
-        # @param ledger - sp.big_map      Initial balances
-        # @param token_metadata - sp.big_map      Token-specific metadata
-        # @param implementation - sp.big_map      Implementation of the actions in form of lambdas that take storage and return updated one,
-        # @param minter - sp.address      The address of the account that will be set as minter of the contract
-        # @param burner - sp.address      The address of the account that will be set as burner of the contract
-        # @param pauser - sp.address      The address of the account that will be set as pauser of the contract
+        '''
+        This token contract is following the FA1.2 standard. It can be paused by the owner that freezes all actions. It is upgradeable by adding or replacing lambdas for specific actions.
+        The contract contains three roles:
+        - A minter, that can mint new tokens.
+        - A burner, that can burn its own tokens, or contract's tokens.
+        - A pauser, that can pause or restore all transfers in the contract.
+        - An owner, that can set the three above.
+        '''
+        
         def __init__(self, owner, metadata, ledger, token_metadata, implementation, minter, burner, pauser):
+            '''
+            Params:
+            owner (sp.address) - the address of the account that will be set as owner of the contract
+            metadata (sp.big_map) - contract-specific metadata
+            ledger (sp.big_map) - initial balances
+            token_metadata (sp.big_map) - token-specific metadata
+            implementation (sp.big_map) - implementation of the actions in form of lambdas that take storage and return updated one,
+            minter (sp.address) - the address of the account that will be set as minter of the contract
+            burner (sp.address) - the address of the account that will be set as burner of the contract
+            pauser (sp.address) - the address of the account that will be set as pauser of the contract
+            '''
             OwnableModule.Ownable.__init__(self, owner)
             PausableModule.Pausable.__init__(self, pauser)
             NonceModule.Nonce.__init__(self)
             Fa1_2.__init__(self, metadata, ledger, token_metadata, implementation, minter, burner)
-        ##
-        # @dev An entrypoint to allow the contract metadata to be updated
-        # 
-        # @param key - sp.string    Metadata's key for entry that will be changed
-        # @param key - sp.bytes    Updated metadata data
+       
         @sp.entrypoint
         def updateMetadata(self, key, value):
+            '''
+            An entrypoint to allow the contract metadata to be updated
+
+            Params:
+            key (sp.string) - metadata's key for entry that will be changed
+            value (sp.bytes) - updated metadata data
+            '''
             assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
             self.data.storage.metadata[key] = value
 
-        ##
-        # @dev Update the implementation. Callable only by the owner
-        # 
-        # @param implementation - sp.big_map    New implementation of the actions in form of lambdas that take storage and return updated one
+        
         @sp.entrypoint
         def updateImplementation(self, implementation):
+            '''
+            Update the implementation. Callable only by the owner
+
+            Params:
+            implementation (sp.big_map) - New implementation of the actions in form of lambdas that take storage and return updated one
+            '''
             assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
 
             self.data.implementation = implementation

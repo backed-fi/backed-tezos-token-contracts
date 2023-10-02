@@ -5,16 +5,23 @@ from contracts.storage.backed_token import BackedTokenStorageModule
 def SetDelegateWhitelistModule():
     SetDelegateWhitelistParams: type = sp.record(address=sp.address, status=sp.bool)
     
-    ##
-    # @dev EIP-712 Function to change the delegate status of account.
-    # Allowed only for owner
-    #
-    # @param whitelistAddress  The address for which to change the delegate status
-    # @param status            The new delegate status
-    #
-    # Emits a { DelegateWhitelistChange } event
     @sp.effects()
     def setDelegateWhitelist(storage, data):
+        '''
+        EIP-712 Function to change the delegate status. Allowed only for owner
+
+        Params:
+        storage (BackedToken storage) - current storage of the BackedToken contract
+        data (sp.bytes) - packed SetDelegateModeParams
+            whitelistAddress (sp.bool) - the address for which to change the delegate status
+            status (sp.bool) - the new delegate status
+
+        Returns:
+        BackedToken storage: Updated storage object
+
+        # Emits:
+        # DelegateWhitelistChange event
+        '''
         sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         params = sp.unpack(data, SetDelegateWhitelistParams).unwrap_some(error="BACKED_TOKEN_SetDelegateMode_CannotUnpackParams")

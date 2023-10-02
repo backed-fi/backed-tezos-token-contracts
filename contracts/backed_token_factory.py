@@ -8,35 +8,38 @@ from contracts.utils.pausable import PausableModule
 @sp.module
 def BackedTokenFactoryModule():
     BACKED_TERMS = "https://www.backedassets.fi/legal-documentation"
-    ##
-    # @dev
-    #
-    # Factory contract, used for creating new, upgradable tokens.
-    # 
-    # The contract contains one role:
-    #  - An owner, which can deploy new tokens
-    #
     class BackedFactory(OwnableModule.Ownable):
-        ##
-        # @param owner - sp.address      The address of the account that will be set as owner of the contract
-        # @param implementation - sp.big_map    Implementation of the actions in form of lambdas that take storage and return updated one, that can be invoked in newly deployed token
-        #
+        '''
+        Factory contract, used for creating new, upgradable tokens.
+
+        The contract contains one role:
+        - An owner, which can deploy new tokens
+        '''
         def __init__(self, implementation, owner):
+            '''
+            Params:
+            owner (sp.address) - the address of the account that will be set as owner of the contract
+            implementation (sp.big_map) - implementation of the actions in form of lambdas that take storage 
+                and return updated one, that can be invoked in newly deployed token
+            '''
             OwnableModule.Ownable.__init__(self, owner)
             self.data.implementation = implementation
         
-        ##
-        # @dev Deploy and configures new instance of BackedFi Token. Callable only by the factory owner
-        # 
-        # @param name - sp.bytes          The name that the newly created token will have
-        # @param symbol - sp.bytes       The symbol that the newly created token will have
-        # @param icon - sp.bytes          The icon that the newly created token will have
-        # @param decimals -sp.bytes      The number of decimals that the newly created token will have
-        # @param tokenOwner - sp.address    The address of the account to which the owner role will be assigned
-        #
-        # Emits a { NewToken } event
         @sp.entrypoint
         def deployToken(self, tokenOwner, minter, burner, pauser, metadata, name, symbol, icon, decimals):
+            '''
+            Deploy and configures new instance of BackedFi Token. Callable only by the factory owner
+
+            Params:
+            name (sp.bytes) - the name that the newly created token will have
+            symbol (sp.bytes) - the symbol that the newly created token will have
+            icon (sp.bytes) - the icon that the newly created token will have
+            decimals (sp.bytes) - the number of decimals that the newly created token will have
+            tokenOwner (sp.address) - the address of the account to which the owner role will be assigned
+
+            Emits:
+            NewToken event
+            '''
             assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
 
             token_metadata = {
@@ -83,12 +86,15 @@ def BackedTokenFactoryModule():
             )
             sp.emit(sp.record(address=newToken, name=name, symbol=symbol), tag="NewToken")
 
-        ##
-        # @dev Update the implementation for future deployments. Callable only by the factory owner
-        # 
-        # @param implementation - sp.big_map    New implementation of the actions in form of lambdas that take storage and return updated one, that can be invoked in newly deployed token
         @sp.entrypoint
         def updateImplementation(self, implementation):
+            '''
+            Update the implementation for future deployments. Callable only by the factory owner
+
+            Params:
+            implementation (sp.big_map) - New implementation of the actions in form of lambdas that 
+                    take storage and return updated one, that can be invoked in newly deployed oracles
+            '''
             assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
 
             self.data.implementation = implementation

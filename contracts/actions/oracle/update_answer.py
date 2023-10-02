@@ -5,9 +5,18 @@ from contracts.storage.backed_oracle import BackedOracleStorageModule
 def UpdateAnswerModule():
     UpdateAnswerParams: type = sp.record(newAnswer=sp.int, newTimestamp=sp.timestamp)
     
-    ##
     @sp.effects()
     def updateAnswer(storage, data):
+        '''
+        Updates BackedOracle answer and sets up new round
+
+        Params:
+        storage (BackedOracle storage) - current storage of the BackedOracle contract
+        data (sp.bytes) - packed UpdateAnswersParams
+
+        Returs:
+        BackedOracle storage: Updated storage object
+        '''
         sp.cast(storage, BackedOracleStorageModule.BackedOracle)
         sp.cast(data, sp.bytes)
         params = sp.unpack(data, UpdateAnswerParams).unwrap_some(error="BACKED_Oracle_UpdateAnswer_CannotUnpackParams")
@@ -19,7 +28,6 @@ def UpdateAnswerModule():
         latestRoundData = updated_storage.roundData.get(updated_storage.latestRoundNumber, default=sp.record(answer=0, timestamp=sp.timestamp(0)))    
 
         assert params.newTimestamp < sp.now, "Timestamp cannot be in the future"
-        # TODO: constants?
         assert sp.now - params.newTimestamp < 300, "Timestamp is too old"
         assert params.newTimestamp > latestRoundData.timestamp, "Timestamp is older than the last update"
         assert params.newTimestamp - latestRoundData.timestamp > 3600, "Timestamp cannot be updated too often"

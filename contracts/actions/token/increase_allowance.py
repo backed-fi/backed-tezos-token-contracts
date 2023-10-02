@@ -5,16 +5,20 @@ from contracts.storage.backed_token import BackedTokenStorageModule
 def IncreaseAllowanceModule():
     IncreaseAllowanceParams: type = sp.record(spender=sp.address, value=sp.nat).layout(("spender", "value"))
 
-    ##
-    # @dev Sets a `value` amount of tokens as the allowance of `spender` over the
-    # caller's tokens.
-    #
-    # @param storage 
-    # @param data
-    #
-    # Emits an {Approval} event.
     @sp.effects()
     def increaseAllowance(storage, data):
+        '''
+        Increases by `value` amount of tokens as the allowance of `spender` over the caller's tokens
+
+        Params:
+        storage (BackedToken storage) - current storage of the BackedToken contract
+        data (sp.bytes) - packed IncreaseAllowanceParams
+            spender (sp.address) - address that will have allowance to spend caller's tokens
+            value (sp.nat) - amount of the tokens that the allowance will be increased by
+
+        Returns:
+        BackedToken storage: Updated storage object
+        '''
         sp.cast(storage, BackedTokenStorageModule.BackedToken)
         sp.cast(data, sp.bytes)
         increaseAllowanceParams = sp.unpack(data, IncreaseAllowanceParams).unwrap_some(error="BACKED_TOKEN_IncreaseAllowance_CannotUnpackParams")

@@ -5,14 +5,20 @@ from contracts.storage.backed_token import BackedTokenStorageModule
 def MintModule():
     MintParams: type = sp.record(address=sp.address, value=sp.nat)
 
-    ##
-    # @dev Function to mint tokens. Allowed only for minter
-    #
-    # @param account   The address that will receive the minted tokens
-    # @param amount    The amount of tokens to mint
-    #
     @sp.effects()
     def mint(storage, data):
+        '''
+        Function to mint tokens. Allowed only for minter
+
+        Params:
+        storage (BackedToken storage) - current storage of the BackedToken contract
+        data (sp.bytes) - packed MintParams
+            account (sp.address) - the account to which the tokens will be minted
+            amount (sp.nat) - the amount of tokens to be minted
+
+        Returns:
+        BackedToken storage: Updated storage object
+        '''
         assert sp.sender == storage.roles.minter, "BACKED_TOKEN_Mint_NotMinter"
 
         sp.cast(storage, BackedTokenStorageModule.BackedToken)

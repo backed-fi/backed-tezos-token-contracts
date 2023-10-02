@@ -4,15 +4,13 @@ from contracts.utils.ownable import OwnableModule
 
 @sp.module
 def BackedOracleForwarderModule():
-    ##
-    # @dev
-    #
-    # Forwarder contract, used as facade for oracle
-    # 
-    # The contract contains one role:
-    #  - An owner, which can change upstream oracle
-    #
     class BackedOracleForwarder(OwnableModule.Ownable):
+        '''
+        Forwarder contract, used as facade for oracle
+
+        The contract contains one role:
+        - An owner, which can change upstream oracle
+        '''
         def __init__(self, owner, upstreamOracle):
             OwnableModule.Ownable.__init__(self, owner)
 
