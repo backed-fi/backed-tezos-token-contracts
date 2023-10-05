@@ -9,7 +9,7 @@
   "scripts": {
     "backed_token_factory:test": "./smartpy test tests/backed_token_factory.test.py output",
     "backed_token_factory:originate": "./smartpy test originations/backed_token_factory/backed_token_factory.origination.py originations/backed_token_factory/output",
-    "backed_token_factory:deploy": "npx ts-node scripts/backed_token_factory/deploy_factory.ts",
+    "backed_token_factory:deploy": "npx ts-node scripts/backed_token_factory/deploy_token_factory.ts",
     "backed_token_factory:update": "npx ts-node scripts/backed_token_factory/update_implementation.ts",
     "backed_token:test": "./smartpy test tests/backed_token.test.py output",
     "backed_token:deploy": "npx ts-node scripts/backed_token_factory/deploy_token.ts",
