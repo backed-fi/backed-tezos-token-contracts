@@ -35,17 +35,20 @@ if "templates" not in __name__:
         implementation=sp.big_map({
             "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
         })
-        factory = BackedOracleFactoryModule.BackedOracleFactory(owner=admin.address, implementation=implementation)
+        metadata = sp.utils.metadata_of_url(
+            "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
+        )
+        factory = BackedOracleFactoryModule.BackedOracleFactory(owner=admin.address, metadata=metadata, implementation=implementation)
 
         sc += factory
 
         sc.h1("Deploy Oracle")
 
         sc.h2("Sender is not admin")
-        factory.deployOracle(owner=admin.address, updater=admin.address, decimals="18", description="Backed Oracle").run(sender=alice, valid=False)
+        factory.deployOracle(owner=admin.address, metadata=metadata, updater=admin.address, decimals="18", description="Backed Oracle").run(sender=alice, valid=False)
 
         sc.h2("Sender is admin")
-        factory.deployOracle(owner=admin.address, updater=admin.address, decimals="18", description="Backed Oracle").run(sender=admin)
+        factory.deployOracle(owner=admin.address, metadata=metadata, updater=admin.address, decimals="18", description="Backed Oracle").run(sender=admin)
 
         updatedImplementation=sp.big_map({
             "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)

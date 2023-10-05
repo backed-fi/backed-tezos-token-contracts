@@ -15,7 +15,7 @@ def BackedTokenFactoryModule():
         The contract contains one role:
         - An owner, which can deploy new tokens
         '''
-        def __init__(self, implementation, owner):
+        def __init__(self, implementation, metadata, owner):
             '''
             Params:
             owner (sp.address) - the address of the account that will be set as owner of the contract
@@ -24,6 +24,7 @@ def BackedTokenFactoryModule():
             '''
             OwnableModule.Ownable.__init__(self, owner)
             self.data.implementation = implementation
+            self.data.metadata = metadata
         
         @sp.entrypoint
         def deployToken(self, tokenOwner, minter, burner, pauser, metadata, name, symbol, icon, decimals):
@@ -70,9 +71,9 @@ def BackedTokenFactoryModule():
                     owner=tokenOwner,
                     pauser=pauser,
                     paused=False,
+                    metadata=metadata_storage,
                     storage=sp.record(
                         balances=balances,
-                        metadata=metadata_storage,
                         total_supply=0,
                         token_metadata=token_metadata_storage,
                         terms=BACKED_TERMS,
@@ -85,6 +86,18 @@ def BackedTokenFactoryModule():
                 )
             )
             sp.emit(sp.record(address=newToken, name=name, symbol=symbol), tag="NewToken")
+
+        @sp.entrypoint
+        def updateMetadata(self, key, value):
+            '''
+            An entrypoint to allow the contract metadata to be updated
+
+            Params:
+            key (sp.string) - metadata's key for entry that will be changed
+            value (sp.bytes) - updated metadata data
+            '''
+            assert self.isOwner(sp.sender), "BACKED_TOKEN_FACTORY_NotOwner"
+            self.data.metadata[key] = value
 
         @sp.entrypoint
         def updateImplementation(self, implementation):

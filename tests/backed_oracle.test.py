@@ -32,12 +32,16 @@ if "templates" not in __name__:
         implementation = sp.big_map({
                 "updateAnswer": sp.record(action=UpdateAnswerModule.updateAnswer, only_admin=False)
         })
+        metadata = sp.utils.metadata_of_url(
+            "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
+        )
         oracle = BackedOracleModule.BackedOracle(
             owner=admin.address,
             implementation = implementation,
             updater=admin.address,
             decimals=decimals,
-            description=description
+            description=description,
+            metadata=metadata
         )
 
         sc += oracle

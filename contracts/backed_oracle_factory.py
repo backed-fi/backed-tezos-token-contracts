@@ -14,7 +14,7 @@ def BackedOracleFactoryModule():
         The contract contains one role:
         - An owner, which can deploy new tokens
         '''
-        def __init__(self, implementation, owner):
+        def __init__(self, implementation, owner, metadata):
             '''
             Params:
             owner (sp.address) - the address of the account that will be set as owner of the newly deployed contract
@@ -22,10 +22,11 @@ def BackedOracleFactoryModule():
                         take storage and return updated one, that can be invoked in newly deployed oracles
             '''
             OwnableModule.Ownable.__init__(self, owner)
+            self.data.metadata=metadata
             self.data.implementation = implementation
         
         @sp.entrypoint
-        def deployOracle(self, owner, updater, decimals, description):
+        def deployOracle(self, owner, updater, decimals, description, metadata):
             '''
             Deploy and configures new instance of BackedFi Token. Callable only by the factory owner
 
@@ -43,6 +44,8 @@ def BackedOracleFactoryModule():
             sp.cast(description, sp.string)
             assert self.isOwner(sp.sender), "BACKED_TOKEN_Factory_NotOwner"
 
+            metadata_storage = sp.big_map({"" : metadata})
+
             newOracle = sp.create_contract(
                 BackedOracleModule.BackedOracle,
                 None,
@@ -56,6 +59,7 @@ def BackedOracleFactoryModule():
                         decimals=decimals,
                         description=description,
                     ),
+                    metadata=metadata_storage,
                     implementation=self.data.implementation
                 )
             )
@@ -72,6 +76,19 @@ def BackedOracleFactoryModule():
             )
             sp.emit(sp.record(address=newOracleForwarder), tag="NewForwarder")
 
+        @sp.entrypoint
+        def updateMetadata(self, key, value):
+            '''
+            An entrypoint to allow the contract metadata to be updated
+
+            Params:
+            key (sp.string) - metadata's key for entry that will be changed
+            value (sp.bytes) - updated metadata data
+            '''
+            assert self.isOwner(sp.sender), "BACKED_ORACLE_NotOwner"
+            self.data.metadata[key] = value
+
+        @sp.entrypoint
         def updateImplementation(self, implementation):
             '''
             Update the implementation for future deployments. Callable only by the factory owner

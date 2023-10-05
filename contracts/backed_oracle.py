@@ -13,8 +13,10 @@ def BackedOracleModule():
         The contract contains one role:
         - An owner, which can deploy new tokens
         '''
-        def __init__(self, owner, implementation, updater, decimals, description):
+        def __init__(self, owner, metadata, implementation, updater, decimals, description):
             OwnableModule.Ownable.__init__(self, owner)
+
+            self.data.metadata = metadata
 
             self.data.storage.updater = updater
             self.data.storage.decimals = decimals
@@ -105,7 +107,19 @@ def BackedOracleModule():
             updated_storage = self.data.implementation[params.actionName].action(sp.record(storage=self.data.storage, data=params.data))
 
             self.data.storage = updated_storage
- 
+
+        @sp.entrypoint
+        def updateMetadata(self, key, value):
+            '''
+            An entrypoint to allow the contract metadata to be updated
+
+            Params:
+            key (sp.string) - metadata's key for entry that will be changed
+            value (sp.bytes) - updated metadata data
+            '''
+            assert self.isOwner(sp.sender), "BACKED_ORACLE_NotOwner"
+            self.data.metadata[key] = value
+
         @sp.entrypoint
         def updateImplementation(self, implementation):
             '''

@@ -81,6 +81,9 @@ if "templates" not in __name__:
         admin = sp.test_account("Administrator")
         alice = sp.test_account("Alice")
         bob = sp.test_account("Robert")
+        metadata = sp.utils.metadata_of_url(
+            "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
+        )
 
         implementation = sp.big_map({
             "mint": sp.record(action=MintModule.mint, only_admin=False),
@@ -98,7 +101,7 @@ if "templates" not in __name__:
             # "setDelegateWhitelist": sp.record(action=SetDelegateWhitelistModule.setDelegateWhitelist, only_admin=True),
         })
 
-        factory = BackedTokenFactoryModule.BackedFactory(owner=admin.address, implementation=implementation)
+        factory = BackedTokenFactoryModule.BackedFactory(owner=admin.address, metadata=metadata, implementation=implementation)
 
         sc+= factory
 
@@ -110,13 +113,7 @@ if "templates" not in __name__:
             minter=admin.address,
             burner=admin.address,
             pauser=admin.address,
-            # TODO:
-            # metadata=sp.utils.metadata_of_url(
-            # "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
-            # ),
-            metadata=sp.utils.bytes_of_string(
-            "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
-            ),
+            metadata=metadata,
             name=sp.utils.bytes_of_string("Backed IB01 $ Treasury Bond 0-1yr"),
             symbol=sp.utils.bytes_of_string("bIB01"),
             icon=sp.utils.bytes_of_string(
@@ -130,13 +127,7 @@ if "templates" not in __name__:
             minter=admin.address,
             burner=admin.address,
             pauser=admin.address,
-            # TODO:
-            # metadata=sp.utils.metadata_of_url(
-            # "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
-            # ),
-            metadata=sp.utils.bytes_of_string(
-            "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
-            ),
+            metadata=metadata,
             name=sp.utils.bytes_of_string("Backed IB01 $ Treasury Bond 0-1yr"),
             symbol=sp.utils.bytes_of_string("bIB01"),
             icon=sp.utils.bytes_of_string(

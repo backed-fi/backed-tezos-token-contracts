@@ -153,13 +153,13 @@ if "templates" not in __name__:
 
         sc.h1("Attempt to update metadata")
         sc.verify(
-            c1.data.storage.metadata[""]
+            c1.data.metadata[""]
             == sp.utils.bytes_of_string(
                 "ipfs://QmaiAUj1FFNGYTu8rLBjc3eeN9cSKwaF8EGMBNDmhzPNFd"
             )
         )
         c1.updateMetadata(key="", value=sp.bytes("0x00")).run(sender=admin)
-        sc.verify(c1.data.storage.metadata[""] == sp.bytes("0x00"))
+        sc.verify(c1.data.metadata[""] == sp.bytes("0x00"))
 
         sc.h1("Entrypoints")
         sc.h2("Minter mints a few coins")

@@ -16,12 +16,12 @@ def BackedTokenModule():
             OwnableModule.OwnableInterface.__init__(self)
             PausableModule.PausableInterface.__init__(self)
             NonceModule.NonceInterface.__init__(self)
+            self.data.metadata = sp.big_map()
             sp.cast(self.data.storage, BackedTokenStorageModule.BackedToken)
             self.data.storage.terms = BACKED_TERMS
             self.data.storage.balances = sp.big_map()
             self.data.storage.total_supply = 0
             self.data.storage.token_metadata = sp.big_map()
-            self.data.storage.metadata = sp.big_map()
             self.data.storage.roles = sp.record(minter=minter, burner=burner)
             self.data.storage.delegateWhitelist= sp.big_map()
             self.data.storage.nonce = sp.big_map()
@@ -55,7 +55,7 @@ def BackedTokenModule():
             )])
 
             self.data.implementation = implementation
-            self.data.storage.metadata = metadata
+            self.data.metadata = metadata
             self.data.storage.token_metadata = sp.big_map(
                 {0: sp.record(token_id=0, token_info=token_metadata)}
             )
@@ -199,7 +199,7 @@ def BackedTokenModule():
             value (sp.bytes) - updated metadata data
             '''
             assert self.isOwner(sp.sender), "BACKED_TOKEN_NotOwner"
-            self.data.storage.metadata[key] = value
+            self.data.metadata[key] = value
 
         
         @sp.entrypoint
